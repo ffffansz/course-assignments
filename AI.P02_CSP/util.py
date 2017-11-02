@@ -14,6 +14,10 @@ class Queue(object):
     def empty(self):
         return self.size() == 0
 
+    def clear(self):
+        while not self.list:
+            self.pop()
+
 class Constraint(object):
     def __init__(self, pos, goal, conspos):
         self.pos = pos            # The constraint's position
@@ -53,7 +57,28 @@ class Puzzle(object):
     def _getDom(self, pos):
         pass
 
+    def _find(self, pos, v):
+        pass
+
     def _GACEnforce(self):
+        while not self.GACQueue.empty():
+            curcon = self.GACQueue.pop()
+            for pos in curcon.conspos:
+                curdom = self._getDom(pos)
+                for v in curdom:
+                    if not self._find(pos, v):   # self._find() return None
+                        curdom.remove(v)
+                        if not curdom:           # If curdom is empty, DWO occured
+                            self.GACQueue.clear()
+                            return False
+                        else:
+                            for cons in self.cons:
+                                if pos in cons.conspos and cons not in self.GACQueue.list:
+                                    self.GACQueue.push(cons)
+        return True
+
+
+    def _pickAnUnassignedPos_MRV(self):
         pass
 
     # Use the GAC algorithm to solve the problem
@@ -61,21 +86,19 @@ class Puzzle(object):
         if self.full():
             self.solutionCnt += 1
             self.print()
-        unassignedPos = None
-        for pos in self.cells:
-            if self.cellsvalue[pos] is None:
-                unassignedPos = pos
-                break
-
-        dom = self._getDom(unassignedPos)
-        for v in dom:
+        unassignedPos = self._pickAnUnassignedPos_MRV()
+        curdom = self._getDom(unassignedPos)
+        for v in curdom:
             self.setCellValue(unassignedPos, v)
-            dom = [v]
+            # Prune all values of unassignedPos != v from curdom[unassignedPos]
+            tmpdom = [v]
             for con in self.cons:
                 if unassignedPos in self.cons.conspos:
                     self.GACQueue.push(con)
-            if (self._GACEnforce):
+            if (self._GACEnforce()):
                 self.solve_GAC(depth + 1)
+        self.setCellValue(unassignedPos, None)
+        return
 
 
 

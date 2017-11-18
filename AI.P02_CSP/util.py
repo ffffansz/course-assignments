@@ -1,6 +1,5 @@
 import copy
 
-
 class Queue(object):
     def __init__(self):
         self.itemlist = []
@@ -98,7 +97,6 @@ class Puzzle(object):
         miniCSP = Puzzle(cont=[anoCont, cont], dom=self.dom)
         # TODO
 
-
     def _GACEnforce(self):
         while not self.GACQueue.empty():
             curcont = self.GACQueue.pop()
@@ -106,7 +104,7 @@ class Puzzle(object):
                 for v in self.dom[pos]:
                     if not self._findSupport(curcont, pos, v):   # self._findSupport() return None
                         self.dom[pos].remove(v)
-                        if not self.dom[pos]:                   # If curdom is empty, DWO occured
+                        if not self.dom[pos]:                    # If curdom is empty, DWO occured
                             self.GACQueue.clear()
                             return False
                         else:
@@ -120,7 +118,6 @@ class Puzzle(object):
         for dom in self.dom.values():
             domsize[dom] = len(self.dom[dom])
         return min(domsize)  # Return the position with smallest domain
-
 
     # Use the GAC algorithm to solve the problem
     def solve_GAC(self, depth):

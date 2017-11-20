@@ -73,10 +73,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\DevFiles\course-assignments\NPA.GBN\include;$(IncludePath)</IncludePath>
+    <IncludePath>f:\DevFiles\course-assignments\NPA.GBN\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>F:\DevFiles\course-assignments\NPA.GBN\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -91,7 +92,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\boost_1_65_1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\DevFiles\course-assignments\NPA.GBN\include;C:\Program Files %28x86%29\boost_1_65_1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,10 +107,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\boost_1_65_1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\boost_1_65_1\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,12 +151,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\Datagram.cpp" />
+    <ClCompile Include="..\..\include\DatagramTimers.cpp" />
+    <ClCompile Include="..\..\include\Timer.cpp" />
     <ClCompile Include="client.cpp" />
-    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Datagram.h" />
-    <ClInclude Include="Timer.h" />
+    <ClInclude Include="..\..\include\DatagramTimers.h" />
+    <ClInclude Include="..\..\include\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

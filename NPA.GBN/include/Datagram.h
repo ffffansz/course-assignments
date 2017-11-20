@@ -5,7 +5,8 @@
 class Datagram
 {
 public:
-	Datagram(std::string data = "", unsigned long seq = 0, bool ack = false);
+	Datagram();
+	Datagram(std::string data, unsigned long seq = 0, bool ack = false);
 	~Datagram();
 	std::string * data();
 	void ack();

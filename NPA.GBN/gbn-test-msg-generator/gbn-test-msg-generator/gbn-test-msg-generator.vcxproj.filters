@@ -15,28 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="client.cpp">
+    <ClCompile Include="gbn-test-msg-generator.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\Datagram.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\DatagramTimers.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\Timer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\include\Datagram.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\DatagramTimers.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Timer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

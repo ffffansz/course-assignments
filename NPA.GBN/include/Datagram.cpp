@@ -1,8 +1,11 @@
 #include "Datagram.h"
 
+Datagram::Datagram()
+{
+}
 
-Datagram::Datagram(std::string data, unsigned long seq = 0, bool ack = false)
-	: data_(data), seq_(seq), ack_(ack)
+Datagram::Datagram(std::string data, unsigned long seq, bool ack) :
+	data_(data), seq_(seq), ack_(ack)
 {
 }
 

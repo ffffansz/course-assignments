@@ -15,7 +15,10 @@ void Timer::start()
 void Timer::tick()
 {
 	if (curtime_ > 0) curtime_ --;
-	if (curtime_ == 0) expired_ = true;
+	if (curtime_ == 0) {
+		expired_ = true;
+		//std::cout << "Timeout" << std::endl;
+	}
 }
 
 void Timer::cancel()

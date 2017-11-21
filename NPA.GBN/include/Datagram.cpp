@@ -1,3 +1,4 @@
+/*
 #include "Datagram.h"
 
 Datagram::Datagram()
@@ -31,3 +32,4 @@ bool Datagram::isAck()
 std::string * Datagram::data() {
 	return &data_;
 }
+*/

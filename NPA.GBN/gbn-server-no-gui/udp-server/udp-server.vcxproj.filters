@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="udp-server.cpp">
+    <ClCompile Include="..\..\include\Datagram.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\Datagram.cpp">
+    <ClCompile Include="gbn-server-no-gui.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

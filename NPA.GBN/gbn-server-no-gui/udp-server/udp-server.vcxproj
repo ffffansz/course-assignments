@@ -147,7 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\Datagram.cpp" />
-    <ClCompile Include="udp-server.cpp" />
+    <ClCompile Include="gbn-server-no-gui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Datagram.h" />

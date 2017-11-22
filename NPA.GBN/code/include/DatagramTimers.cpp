@@ -1,15 +1,14 @@
 #include "DatagramTimers.h"
 #include "Datagram.h"
 
-#define DEFAULT_TIMEOUT 20
-
-DatagramTimers::DatagramTimers(boost::shared_ptr<std::map<unsigned, NewDatagram>> pDg) : pDatagram_(pDg), istimeout_(false)
+DatagramTimers::DatagramTimers(boost::shared_ptr<std::map<unsigned, NewDatagram>> pDg, unsigned timeout)
+	: pDatagram_(pDg), istimeout_(false), timeout_(timeout)
 {
 }
 
-void DatagramTimers::addTimer(unsigned seq)
+	void DatagramTimers::addTimer(unsigned seq)
 {
-	boost::shared_ptr<Timer> pNewTimer = boost::make_shared<Timer>(DEFAULT_TIMEOUT);
+	boost::shared_ptr<Timer> pNewTimer = boost::make_shared<Timer>(timeout_);
 	pNewTimer->start();   //start the timer
 	timers_.insert(std::pair<unsigned, Timer>(seq, *pNewTimer));
 	//std::cout << "Add timer No." << seq << std::endl;

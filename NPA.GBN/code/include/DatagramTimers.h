@@ -7,10 +7,13 @@
 #include "Timer.h"
 #include "Datagram.h"
 #pragma once
+
+#define DEFAULT_TIMEOUT 20
+
 class DatagramTimers
 {
 public:
-	DatagramTimers(boost::shared_ptr<std::map<unsigned, NewDatagram>> pDg);
+	DatagramTimers(boost::shared_ptr<std::map<unsigned, NewDatagram>> pDg, unsigned timeout = DEFAULT_TIMEOUT);
 	
 	//add a timer relate to No.seq Datagram
 	void addTimer(unsigned seq);
@@ -36,6 +39,7 @@ public:
 	~DatagramTimers();
 private:
 	std::map<unsigned, Timer> timers_;     // seq timer pairs
+	unsigned timeout_;
 	boost::shared_ptr < std::map<unsigned, NewDatagram>> pDatagram_;   // pointer to the datagram
 	bool istimeout_;
 	std::string timeoutinfo_;

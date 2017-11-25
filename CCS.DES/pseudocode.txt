@@ -1,3 +1,17 @@
+func str2bitlist(str):
+    //str.encode -> bytes -> bin -> list -> bitlist
+    sbytes = str.encode() //utf8
+    size = len(sbytes)
+    sum = 0
+    for i in range(size):
+        sum += (sbytes[i] << (8 * (size - i - 1)))
+    b = bin(sum)
+    return list(b)
+
+func bitlist2str(bitlist):
+    bitstr = ''.join(bitlist)
+
+
 // 将一个n bits的分组分裂成左右两半
 func spliter(n bits, l, r)   // n = l + r 
     return left l bits, right r bits;

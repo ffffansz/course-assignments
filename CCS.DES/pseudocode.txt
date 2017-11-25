@@ -1,0 +1,399 @@
+// 将一个n bits的分组分裂成左右两半
+func spliter(n bits, l, r)   // n = l + r 
+    return left l bits, right r bits;
+// 将一个n bits的分组，分裂成若干个64 bits的分组，允许最后一个分组不足64位
+func spliter_64(n bits)
+    return listOf64BitBlocks
+// 取一个bit串最左的n位
+func leftmostBits(bits, n):
+    l, r = spliter(bits, n, len(bits) - n)
+    return l
+// 取一个bit串最右的n位
+func leftmostBits(bits, n):
+    l, r = spliter(bits, len(bits) - n, n)
+    return r
+// 将两个32 bits的分组连接起来
+func combiner(left l bits, right r bits)  
+    return l + r bits;
+// 异或器，要求block1和block2 bits数相同
+func xor(block1, block2)
+    return block1 xor block2;
+// 循环左移位器，将一个bit串向左循环移位n位
+func cycLeftShift(bits, n):
+    return bits << n;
+// 填充移位器，将一个bit串向左移位n位，然后用一个m bits的bit串的最左n位填充
+func padLeftShift(ori_bits, pad_bits, n):
+    tmp = ori_bits << n;
+    tmp.replaceRightmost(n, leftmostBits(pad_bits, n))
+    return tmp        //注意tmp是否为可变变量，如果是，则需要deepcopy
+// 从一个bit串中去掉一个指定位（第一位的pos是0）
+func removeBit(bits, pos):
+    return ret;
+// 置换，输入为n bits和一个置换表，return size bits (size = permutationTable.size)
+func permute(n bits, permutationTable):
+    ret = generate a permutationTable.size bits block
+    for i in range(len(ret)):
+        ret[i] = input n bits[permutationTable[i]]
+    return ret;
+// 填充，按照PKCS7的标准
+func paded(bits):
+    return paded_bits
+// 去掉填充，按照PKCS7的标准
+func unpaded(bits):
+    return unpaded_bits
+
+// 比特移位数表
+data generateKeyShiftTable[16] 
+= [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1];
+
+class basic_DES:
+    data plbits;    //64 bits
+    data cibits;    //64 bits
+    data keys[16]; //48 bits
+    data op;       //op = 0 -> 加密；op = 1 -> 解密；op = error -> 异常
+    // 构造函数
+    constructor(iniKey, plbits='', cibits=''):   // iniKey: 64 bits
+        plbits = plbits;
+        cibits = cibits;
+        assert(iniKey != empty and (plbits != '' or cibits != ''));
+        if plbits = '' and cibits != '':  op = 1;
+        elif plbits != '' and cibits == '': op = 0;
+        keys = KeyGenerator(iniKey).keys
+
+
+    // DES函数.换字盒，需要指明轮数，每轮的换字盒不相同
+    func sbox(48 bits, round) 
+        return 32 bits;
+    // DES函数
+    func DES_func(32 bits, round):
+        t = permute(32 bits, expanPermutationTable);
+        t = xor(t, keys[round]);   // 注意加密和解密使用Key的顺序正好相反
+        t = sbox(t, round);
+        return permute(t, straightPermutationTable);
+    // DES 单轮加密
+    func mixer(left 32 bits, right 32 bits, round):
+        nl = l xor DES_func(r, round);
+        nr = r;
+        return nl, nr;
+    // DES 加密
+    func encry():
+        assert(op == 0);   //加密
+        afterIniPert = permute(plbits, initialPermutationTable);
+        l, r = spliter(afterIniPert, 32, 32);
+        for i in range(16):
+            l, r = mixer(l, r, i);
+            if (round != 15):
+                l, r = r, l;
+        com = combiner(l, r);
+        cibits = permute(com, finalPermutationTable);
+    
+    func decry():
+        assert(op == 1);
+        afterIniPert = permute(cibits, initialPermutationTable);
+        l, r = spliter(afterIniPert, 32, 32);
+        for i in range(16):
+            l, r = mixer(l, r, 15 - i);
+            if (round != 15):
+                l, r = r, l;
+        com = combiner(l, r);
+        plbits = permute(com, finalPermutationTable);
+
+class KeyGenerator:
+    data iniKey;          // 64 bits
+    data iniKey56;        // 56 bits
+    data iniKey56_L;      // 28 bits
+    data iniKey56_R;      // 28 bits
+    data keys[16];    // 48 bits
+
+    // 构造函数
+    constructor(iniKey):
+        iniKey = iniKey;
+        iniKey56 = removeParityAndPermute()
+        iniKey56_L, iniKey56_R = spliter(iniKey56, 28, 28)
+        for i in range(16):
+            keys[i] = generateKey(i);
+    
+    // 去除奇偶校验（第8, 16, 24, 32, ..., 64位）后置换，产生一个56 bits的bit串，即iniKey56
+    func removeParityAndPermute():
+        will_remove = [i in range(64) if (i + 1) % 8 == 0];
+        ret = iniKey;         // 如果iniKey是不可变对象，那就可以直接把ret替换成iniKey
+        for i in range(len(will_remove)):
+            ret = removeBit(ret, will_remove[i] - i);
+        ret = permute(iniKey56, parityDropTable)
+        return ret;
+    
+    // 生成指定轮数的key
+    func generateKey(round):
+        shiftCnt = 0;
+        for i in range(round + 1):
+            shiftCnt += generateKeyShiftTable[i];
+        ret_l = cycLeftShift(iniKey56_L, shiftCnt);
+        ret_r = cycLeftShift(iniKey56_R, shiftCnt);
+        ret = combiner(ret_l, ret_r)
+        ret = permute(ret, keyCompressTable)
+        return ret
+
+class ECB_DES:
+    data full_pltxt;     //原始/解密得到的明文, str
+    data encode_plbits;  //经过编码的明文, bit（如果作为输入，会经过填充；如果作为输出，会去掉填充）
+    data encode_cibits;  //经过编码的密文, bit（如果作为输入，会经过填充；如果作为输出，会去掉填充）
+    data full_citxt;     //原始/加密得到的密文, str
+    data op;             //op = 0 -> 加密；op = 1 -> 解密
+    data key;            //64 bits
+
+    constructor(key, ori_pltxt='', ori_citxt=''):
+        key = key;
+        full_pltxt = ori_pltxt;
+        full_citxt = ori_citxt;
+        assert(ori_pltxt != '' or ori_citxt != '')
+        if ori_pltxt != '': 
+            op = 0;
+            encode_plbits = paded(encode(ori_pltxt));
+        elif ori_citxt != '': 
+            op = 1;
+            encode_cibits = paded(encode(ori_pltxt));
+    
+    func encry():
+        assert(op == 0);
+        blocks = spliter_64(encode_plbits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        for i in range(len(blocks)):
+            partRet = basic_DES(key, plbits=blocks[i])
+            partRet.encry()
+            ret.append(partRet.cibits)
+        encode_cibits = ret.combine()
+        full_citxt = decode(unpaded(encode_cibits))
+
+    func decry():
+        assert(op == 1);
+        blocks = spliter_64(encode_cibits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        for i in range(len(blocks)):
+            partRet = basic_DES(key, cibits=blocks[i])
+            partRet.decry()
+            ret.append(partRet.plbits)
+        encode_plbits = ret.combine()
+        full_pltxt = decode(unpaded(encode_plbits))
+
+class CBC_DES:           //可以以时间戳作为IV
+    data full_pltxt;     //原始/解密得到的明文, str
+    data encode_plbits;  //经过编码的明文, bit（如果作为输入，会经过填充；如果作为输出，会去掉填充）
+    data encode_cibits;  //经过编码的密文, bit（如果作为输入，会经过填充；如果作为输出，会去掉填充）
+    data full_citxt;     //原始/加密得到的密文, str
+    data op;             //op = 0 -> 加密；op = 1 -> 解密
+    data key;            //64 bits
+    data IV;             //Initial Vector，64 bits，用于和第一个block进行异或
+    
+    
+    constructor(key, IV, ori_pltxt='', ori_citxt=''):
+        key = key;
+        IV = IV;
+        full_pltxt = ori_pltxt;
+        full_citxt = ori_citxt;
+        assert(ori_pltxt != '' or ori_citxt != '')
+        if ori_pltxt != '': 
+            op = 0;
+            encode_plbits = paded(encode(ori_pltxt));
+        elif ori_citxt != '': 
+            op = 1;
+            encode_cibits = paded(encode(ori_pltxt));
+
+    func encry():
+        assert(op == 0);
+        blocks = spliter_64(encode_plbits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        firstPartRet = basic_DES(key, plbits=xor(blocks[0], IV))
+        firstPartRet.encry()
+        ret.append(firstPartRet.cibits)
+        for i in range(1, len(blocks)):
+            partRet = basic_DES(key, plbits=xor(blocks[i], ret[i - 1]))
+            partRet.encry()
+            ret.append(partRet.cibits)
+        encode_cibits = ret.combine()
+        full_citxt = decode(unpaded(encode_cibits))
+    
+    func decry():
+        assert(op == 1);
+        blocks = spliter_64(encode_cibits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        firstPartRet = basic_DES(key, cibits=blocks[0])
+        firstPartRet.decry()
+        ret.append(xor(firstPartRet.plbits, IV))
+        for i in range(1, len(blocks)):
+            partRet = basic_DES(key, cibits=blocks[i])
+            partRet.decry()
+            ret.append(xor(partRet.plbits, blocks[i - 1]))
+        encode_plbits = ret.combine()
+        full_pltxt = decode(unpaded(encode_plbits))
+
+class CFB_DES:           //每条消息应当使用不同的IV
+    data full_pltxt;     //原始/解密得到的明文, str
+    data encode_plbits;  //经过编码的明文, bit（CFB模式不填充）
+    data encode_cibits;  //经过编码的密文, bit（CFB模式不填充）
+    data full_citxt;     //原始/加密得到的密文, str
+    data op;             //op = 0 -> 加密；op = 1 -> 解密
+    data key;    
+    data IV;             //Initial Vector，64 bits，用于初始化shiftReg的值，
+    data shiftReg;
+
+    constructor(key, IV, ori_pltxt='', ori_citxt=''):
+        key = key;
+        IV = IV;
+        full_pltxt = ori_pltxt;
+        full_citxt = ori_citxt;
+        assert(ori_pltxt != '' or ori_citxt != '')
+        assert(not(ori_pltxt != '' and ori_citxt != ''))
+        if ori_pltxt != '': 
+            op = 0;
+            encode_plbits = encode(ori_pltxt);
+        elif ori_citxt != '': 
+            op = 1;
+            encode_cibits = encode(ori_pltxt);
+        shiftReg = IV
+    
+    func encry():
+        assert(op == 0);
+        blocks = spliter_64(encode_plbits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        for i in range(len(blocks)):
+            partRet = basic_DES(key, plbits=shiftReg)
+            partRet.encry()
+            partRet = xor(blocks[i], leftmostBits(partRet.cibits, len(blocks[i])))
+            ret.append(partRet)
+            shiftReg = padLeftShift(shiftReg, ret[i], len(blocks[i]))
+        encode_cibits = ret.combine()
+        full_citxt = decode(encode_cibits)
+        shiftReg = IV
+
+    func decry():
+        assert(op == 0);
+        blocks = spliter_64(encode_cibits)        //密文
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        firstPartRet = basic_DES(key, plbits=shiftReg)
+        firstPartRet.encry()
+        firstPartRet = xor(blocks[0], leftmostBits(firstPartRet.cibits, len(blocks[0])))
+        ret.append(firstPartRet)
+        shiftReg = padLeftShift(shiftReg, blocks[0], len(blocks[0]))
+        for i in range(1, len(blocks)):
+            partRet = basic_DES(key, plbits=shiftReg)          //Note: CFB的加密和解密都是用DES的加密函数
+            partRet.encry()
+            partRet = xor(blocks[i], leftmostBits(partRet.cibits, len(blocks[i])))
+            ret.append(partRet)
+            shiftReg = padLeftShift(shiftReg, blocks[i - 1], len(blocks[i - 1]))
+        encode_plbits = ret.combine()
+        full_pltxt = decode(encode_plbits)
+        shiftReg = IV
+
+class OFB_DES:           //每条消息应当使用不同的IV
+    data full_pltxt;     //原始/解密得到的明文, str
+    data encode_plbits;  //经过编码的明文, bit（OFB模式不填充）
+    data encode_cibits;  //经过编码的密文, bit（OFB模式不填充）
+    data full_citxt;     //原始/加密得到的密文, str
+    data op;             //op = 0 -> 加密；op = 1 -> 解密
+    data key;    
+    data IV;             //Initial Vector，64 bits，用于初始化shiftReg的值，
+    data shiftReg;
+    //data tempReg;
+
+    constructor(key, IV, ori_pltxt='', ori_citxt=''):
+        key = key;
+        IV = IV;
+        full_pltxt = ori_pltxt;
+        full_citxt = ori_citxt;
+        assert(ori_pltxt != '' or ori_citxt != '')
+        assert(not(ori_pltxt != '' and ori_citxt != ''))
+        if ori_pltxt != '': 
+            op = 0;
+            encode_plbits = encode(ori_pltxt);
+        elif ori_citxt != '': 
+            op = 1;
+            encode_cibits = encode(ori_pltxt);
+        shiftReg = IV
+    
+    func encry():
+        assert(op == 0);
+        blocks = spliter_64(encode_plbits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        for i in range(len(blocks)):
+            partRet = basic_DES(key, plbits=shiftReg)
+            partRet.encry()
+            tempReg = partRet.cibits
+            partRet = xor(blocks[i], leftmostBits(tempReg, len(blocks[i])))
+            ret.append(partRet)
+            shiftReg = padLeftShift(shiftReg, tempReg, len(blocks[i]))
+        encode_cibits = ret.combine()
+        full_citxt = decode(encode_cibits)
+        shiftReg = IV
+
+    func decry():
+        assert(op == 0);
+        blocks = spliter_64(encode_cibits)        //密文
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        firstPartRet = basic_DES(key, plbits=shiftReg)
+        firstPartRet.encry()
+        tempReg = firstPartRet.cibits
+        firstPartRet = xor(blocks[0], leftmostBits(tempReg, len(blocks[0])))
+        ret.append(firstPartRet)
+        shiftReg = padLeftShift(shiftReg, tempReg, len(blocks[0]))
+        for i in range(1, len(blocks)):
+            partRet = basic_DES(key, plbits=shiftReg)          //Note: OFB的加密和解密都是用DES的加密函数
+            partRet.encry()
+            tempReg = partRet.cibits
+            partRet = xor(blocks[i], leftmostBits(tempReg, len(blocks[i])))
+            ret.append(partRet)
+            shiftReg = padLeftShift(shiftReg, tempReg, len(blocks[i - 1]))
+        encode_plbits = ret.combine()
+        full_pltxt = decode(encode_plbits)
+        shiftReg = IV
+
+class CTR_DES:           //每条消息应当使用不同的IV
+    data full_pltxt;     //原始/解密得到的明文, str
+    data encode_plbits;  //经过编码的明文, bit（如果作为输入，会经过填充；如果作为输出，会去掉填充）
+    data encode_cibits;  //经过编码的密文, bit（如果作为输入，会经过填充；如果作为输出，会去掉填充）
+    data full_citxt;     //原始/加密得到的密文, str
+    data op;             //op = 0 -> 加密；op = 1 -> 解密
+    data key;    
+    data IV;             //Initial Vector，64 bits，用于初始化shiftReg的值，
+    data counter;
+
+    constructor(key, IV, ori_pltxt='', ori_citxt=''):
+        key = key;
+        IV = IV;
+        full_pltxt = ori_pltxt;
+        full_citxt = ori_citxt;
+        assert(ori_pltxt != '' or ori_citxt != '')
+        assert(not(ori_pltxt != '' and ori_citxt != ''))
+        if ori_pltxt != '': 
+            op = 0;
+            encode_plbits = paded(encode(ori_pltxt));
+        elif ori_citxt != '': 
+            op = 1;
+            encode_cibits = paded(encode(ori_pltxt));
+        counter = IV
+    
+    func encry():
+        assert(op == 0);
+        blocks = spliter_64(encode_plbits)
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        for i in range(len(blocks)):
+            partRet = basic_DES(key, plbits=counter)
+            partRet.encry()
+            partRet = xor(blocks[i], partRet.cibits)
+            ret.append(partRet)
+            update counter
+        encode_cibits = ret.combine()
+        full_citxt = decode(unpaded(encode_cibits))
+        counter = IV
+
+    func decry():
+        assert(op == 0);
+        blocks = spliter_64(encode_cibits)        //密文
+        ret = []        //或是一个bit数据结构，那之后的操作也要按照bit的操作进行修改
+        for i in range(len(blocks)):
+            partRet = basic_DES(key, plbits=counter)          //Note: OFB的加密和解密都是用DES的加密函数
+            partRet.encry()
+            partRet = xor(blocks[i], partRet.cibits)
+            ret.append(partRet)
+            update counter
+        encode_plbits = ret.combine()
+        full_pltxt = decode(unpaded(encode_plbits))

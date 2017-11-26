@@ -21,18 +21,12 @@
     <ClCompile Include="test_utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="KeyGen.cpp">
+    <ClCompile Include="DesBlock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="des_utility.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="des_tables.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyGen.h">
+    <ClInclude Include="DesBlock.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

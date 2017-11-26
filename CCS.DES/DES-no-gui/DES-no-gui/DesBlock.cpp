@@ -148,6 +148,52 @@ des::util::bytes_unpaded_PKCS7(const dynamic_bitset<>& ori) {
 	return ori;
 }
 
+/* 将一个string分解成若干个64 bit的bitset，允许最后一个bitset不足64位，vec[0]是string最高的64位；对于某一个bitset来说，bs[0]是64位中最低的那一位 */
+shared_ptr<std::vector<shared_ptr<dynamic_bitset<>>>>
+des::util::strToBitsets(const std::string & str)
+{
+	shared_ptr<std::vector<shared_ptr<dynamic_bitset<>>>> ret = make_shared<std::vector<shared_ptr<dynamic_bitset<>>>>();
+	if (str.size() == 0)
+		return shared_ptr<std::vector<shared_ptr<dynamic_bitset<>>>>();
+	assert(sizeof(str[0]) == 1);
+	size_t byteSize = str.size(); //比特数
+	unsigned now8Byte = 0;
+	for (; 8 * now8Byte + 8 < byteSize; now8Byte ++) {  //每8个字节为一个单位
+		shared_ptr<dynamic_bitset<>> pBs = make_shared<dynamic_bitset<>>(64);
+		for (unsigned i = 0; i < 8; i++) {
+			for (unsigned j = 0; j < 8; j++) {
+				(*pBs)[i * 8 + j] = ((str[8 * now8Byte + i] >> j) & 1);  //逐位获得信息，从低到高
+			}
+		}
+		ret->push_back(pBs);
+	}
+	shared_ptr<dynamic_bitset<>> pLastBs = make_shared<dynamic_bitset<>>();
+	for (unsigned i = 8 * now8Byte; i < byteSize; i++) {
+		for (unsigned j = 0; j < 8; j++) {
+			pLastBs->push_back((str[i] >> j) & 1);
+		}
+	}
+	ret->push_back(pLastBs);
+	return ret;
+}
+
+shared_ptr<std::string> des::util::bitsetsToStr(const std::vector<shared_ptr<dynamic_bitset<>>>& bss)
+{
+	shared_ptr<std::string> pRet = make_shared<std::string>();
+	for (size_t i = 0; i < bss.size(); i++) {
+		std::string partRet;
+		for (unsigned j = 0; j < bss[i]->size() / 8; j++) {
+			char c = 0x00;
+			for (unsigned k = 0; k < 8; k++) {
+				c += ((*bss[i])[8 * j + k]) << k;
+			}
+			partRet += c;
+		}
+		*pRet += partRet;
+	}
+	return pRet;
+}
+
 
 
 des::DesBlock::DesBlock(const dynamic_bitset<>& initKey, dynamic_bitset<> plbits, dynamic_bitset<> cibits)

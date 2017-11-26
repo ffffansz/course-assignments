@@ -24,9 +24,15 @@
     <ClCompile Include="DesBlock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DES_ECB.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DesBlock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DES_ECB.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

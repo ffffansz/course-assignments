@@ -6,6 +6,8 @@
 #include <bitset>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/array.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace boost;
 
@@ -178,6 +180,14 @@ namespace des {
 		/* 将一个*可能*填充过的bitset去掉填充（低位填充，按字节填充），按照PKCS7的标准，返回去掉填充后的bitset */
 		dynamic_bitset<>
 			bytes_unpaded_PKCS7(const dynamic_bitset<>& ori);
+
+		/* 将一个string分解成若干个64 bit的bitset，允许最后一个bitset不足64位，vec[0]是string最高的64位；对于某一个bitset来说，bs[0]是64位中最低的那一位 */
+		shared_ptr<std::vector<shared_ptr<dynamic_bitset<>>>>
+			strToBitsets(const std::string& str);
+
+		/* 将若干个bitset转化成string，注意，需要在调用该函数前就去掉最后一个bitset的的填充字节 */
+		shared_ptr<std::string>
+			bitsetsToStr(const std::vector<shared_ptr<dynamic_bitset<>>>& bss);
 	}
 	
 	class KeyGen
@@ -203,8 +213,8 @@ namespace des {
 	{
 	public:
 		DesBlock(const dynamic_bitset<>& initKey,
-			dynamic_bitset<> plbits = dynamic_bitset<>(),
-			dynamic_bitset<> cibits = dynamic_bitset<>());
+			dynamic_bitset<> plbits,
+			dynamic_bitset<> cibits);
 
 		void encry();
 

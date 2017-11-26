@@ -147,10 +147,12 @@
   <ItemGroup>
     <ClCompile Include="DES-no-gui.cpp" />
     <ClCompile Include="DesBlock.cpp" />
+    <ClCompile Include="DES_ECB.cpp" />
     <ClCompile Include="test_utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DesBlock.h" />
+    <ClInclude Include="DES_ECB.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -293,7 +293,7 @@ class CFB_DES:           //每条消息应当使用不同的IV
             partRet.encry()
             partRet = xor(blocks[i], leftmostBits(partRet.cibits, len(blocks[i])))
             ret.append(partRet)
-            shiftReg = padLeftShift(shiftReg, blocks[i - 1], len(blocks[i - 1]))
+            shiftReg = padLeftShift(shiftReg, blocks[i], len(blocks[i]))
         encode_plbits = ret.combine()
         full_pltxt = decode(encode_plbits)
         shiftReg = IV

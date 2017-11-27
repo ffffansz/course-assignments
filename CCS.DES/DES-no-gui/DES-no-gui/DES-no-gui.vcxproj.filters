@@ -27,12 +27,36 @@
     <ClCompile Include="DES_ECB.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DES_CBC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DES_CFB.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DES_OFB.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DES_CTR.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DesBlock.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DES_ECB.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DES_CBC.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DES_CFB.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DES_OFB.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DES_CTR.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -194,6 +194,18 @@ shared_ptr<std::string> des::util::bitsetsToStr(const std::vector<shared_ptr<dyn
 	return pRet;
 }
 
+shared_ptr<dynamic_bitset<>> des::util::multi_combiner(const std::vector<shared_ptr<dynamic_bitset<>>>& bss)
+{
+	std::string retStr;
+	for (size_t i = 0; i < bss.size(); i++) {
+		std::string str;
+		to_string(*(bss[i]), str);
+		retStr += str;
+	}
+	shared_ptr<dynamic_bitset<>> ret = boost::make_shared<dynamic_bitset<>>(retStr);
+	return ret;
+}
+
 
 
 des::DesBlock::DesBlock(const dynamic_bitset<>& initKey, dynamic_bitset<> plbits, dynamic_bitset<> cibits)

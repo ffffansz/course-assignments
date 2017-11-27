@@ -367,7 +367,7 @@ class CTR_DES:           //每条消息应当使用不同的IV
     data full_citxt;     //原始/加密得到的密文, str
     data op;             //op = 0 -> 加密；op = 1 -> 解密
     data key;    
-    data IV;             //Initial Vector，64 bits，用于初始化shiftReg的值，
+    data IV;             //Initial Vector，64 bits，用于初始化counter的值，
     data counter;
 
     constructor(key, IV, ori_pltxt='', ori_citxt=''):

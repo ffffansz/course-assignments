@@ -23,6 +23,16 @@ shared_ptr<std::string> DES_CTR::getPltxt()
 	return pPltxt_;
 }
 
+shared_ptr<dynamic_bitset<>> DES_CTR::getCiFileBits()
+{
+	return pCiFileBits_;
+}
+
+shared_ptr<dynamic_bitset<>> DES_CTR::getPlFileBits()
+{
+	return pPlFileBits_;
+}
+
 DES_CTR::~DES_CTR()
 {
 }
@@ -90,6 +100,38 @@ DES_CTR::DES_CTR(const dynamic_bitset<>& key, const dynamic_bitset<>& IV, const 
 	}
 }
 
+DES_CTR::DES_CTR(const dynamic_bitset<>& key, const dynamic_bitset<>& IV, const shared_ptr<dynamic_bitset<>>& pPlFileBits, const shared_ptr<dynamic_bitset<>>& pCiFileBits)
+	: key_(key), IV_(IV), pPlFileBits_(pPlFileBits), pCiFileBits_(pCiFileBits)
+{
+	assert(!key_.empty());
+	assert(pPlFileBits->size() != 0 || pCiFileBits->size() != 0);
+	if (pPlFileBits->size() != 0 && pCiFileBits->size() == 0) {
+		op_ = false;
+		pPlbitsets_ = make_shared<std::vector<shared_ptr<dynamic_bitset<>>>>();
+		std::vector<dynamic_bitset<>> tmp = des::util::spliter_n(*pPlFileBits, 64);
+		for (std::vector<dynamic_bitset<>>::iterator it = tmp.begin(); it != tmp.end(); it++) {
+			shared_ptr<dynamic_bitset<>> local = boost::make_shared<dynamic_bitset<>>(*it);
+			pPlbitsets_->push_back(local);
+		}
+		pCibitsets_ = make_shared<std::vector<shared_ptr<dynamic_bitset<>>>>();
+		assert(pPlbitsets_->size() != 0);
+		*((*pPlbitsets_)[pPlbitsets_->size() - 1]) = des::util::bytes_paded_PKCS7(*((*pPlbitsets_)[pPlbitsets_->size() - 1]), 64);  //对最后一个可能不足64位的bitset进行填充
+	}
+	else {
+		op_ = true;
+		pCibitsets_ = make_shared<std::vector<shared_ptr<dynamic_bitset<>>>>();
+		std::vector<dynamic_bitset<>> tmp = des::util::spliter_n(*pCiFileBits, 64);
+		for (std::vector<dynamic_bitset<>>::iterator it = tmp.begin(); it != tmp.end(); it++) {
+			shared_ptr<dynamic_bitset<>> local = boost::make_shared<dynamic_bitset<>>(*it);
+			pCibitsets_->push_back(local);
+		}
+		pPlbitsets_ = make_shared<std::vector<shared_ptr<dynamic_bitset<>>>>();
+		assert(pCibitsets_->size() != 0);
+		assert((*pCibitsets_)[pCibitsets_->size() - 1]->size() == 64); // 约定输入的解密的bitset均为64位
+																	   //*((*pCibitsets_)[pCibitsets_->size() - 1]) = des::util::bytes_paded_PKCS7(*((*pCibitsets_)[pCibitsets_->size() - 1]), 64);  //对最后一个可能不足64位的bitset进行填充
+	}
+}
+
 void DES_CTR::encry()
 {
 	assert(op_ == false);
@@ -101,6 +143,21 @@ void DES_CTR::encry()
 		updateCounter_(i);
 	}
 	pCitxt_ = des::util::bitsetsToStr(*pCibitsets_);
+	counter_ = IV_;
+	return;
+}
+
+void DES_CTR::encry_f()
+{
+	assert(op_ == false);
+	for (size_t i = 0; i < pPlbitsets_->size(); i++) {
+		des::DesBlock partRet(key_, counter_, dynamic_bitset<>());
+		partRet.encry();
+		shared_ptr<dynamic_bitset<>> pPartRet = boost::make_shared<dynamic_bitset<>>(*((*pPlbitsets_)[i]) ^ partRet.getCipherBits());
+		pCibitsets_->push_back(pPartRet);
+		updateCounter_(i);
+	}
+	pCiFileBits_ = des::util::multi_combiner(*pCibitsets_);
 	counter_ = IV_;
 	return;
 }
@@ -118,6 +175,23 @@ void DES_CTR::decry()
 	assert(pPlbitsets_->size() != 0);
 	*((*pPlbitsets_)[pPlbitsets_->size() - 1]) = des::util::bytes_unpaded_PKCS7(*((*pPlbitsets_)[pPlbitsets_->size() - 1]));
 	pPltxt_ = des::util::bitsetsToStr(*pPlbitsets_);
+	counter_ = IV_;
+	return;
+}
+
+void DES_CTR::decry_f()
+{
+	assert(op_ == true);
+	for (size_t i = 0; i < pCibitsets_->size(); i++) {
+		des::DesBlock partRet(key_, counter_, dynamic_bitset<>());
+		partRet.encry();
+		shared_ptr<dynamic_bitset<>> pPartRet = boost::make_shared<dynamic_bitset<>>(*((*pCibitsets_)[i]) ^ partRet.getCipherBits());
+		pPlbitsets_->push_back(pPartRet);
+		updateCounter_(i);
+	}
+	assert(pPlbitsets_->size() != 0);
+	*((*pPlbitsets_)[pPlbitsets_->size() - 1]) = des::util::bytes_unpaded_PKCS7(*((*pPlbitsets_)[pPlbitsets_->size() - 1]));
+	pPlFileBits_ = des::util::multi_combiner(*pPlbitsets_);
 	counter_ = IV_;
 	return;
 }

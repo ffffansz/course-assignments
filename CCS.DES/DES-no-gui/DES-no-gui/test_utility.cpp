@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/utility/binary.hpp>
 #include <boost/array.hpp>
@@ -61,5 +62,52 @@ int main() {
 	ctr_decry.decry();
 	std::cout << *ctr_decry.getPltxt() << std::endl;
 
+	std::ifstream in;
+	std::ofstream out;
+	shared_ptr<dynamic_bitset<>> filesBits = make_shared<dynamic_bitset<>>(2048);
+	shared_ptr<dynamic_bitset<>> emptyFilesBits = make_shared<dynamic_bitset<>>();
+
+	std::bitset<2048> plain; //256 B
+	in.open("C://Users//Libre//Desktop//pl.png", std::ios::binary);
+	out.open("C://Users//Libre//Desktop//tmp.txt");
+	in.read((char*)&plain, sizeof(plain));
+	unsigned cnt = 0;
+	while (in.read((char*)&plain, sizeof(plain))) {
+		//plain.to_string
+		shared_ptr<dynamic_bitset<>> filesBits = boost::make_shared<dynamic_bitset<>>(plain.to_string());
+		DES_ECB ebc_encry_f(key, filesBits, emptyFilesBits);
+		ebc_encry_f.encry_f();
+		plain.reset();
+		std::string str;
+		to_string(*ebc_encry_f.getCiFileBits(), str);
+		plain = std::bitset<2048>(str);
+		out.write((char*)&plain, 2048 / 8);
+		plain.reset();
+		std::cout << cnt << std::endl;
+		cnt++;
+	}
+	in.close();
+	out.close();
+
+	in.open("C://Users//Libre//Desktop//tmp.txt", std::ios::binary);
+	out.open("C://Users//Libre//Desktop//ret.png");
+	//in.read((char*)&plain, sizeof(plain));
+	cnt = 0;
+	while (in.read((char*)&plain, sizeof(plain))) {
+		//plain.to_string
+		shared_ptr<dynamic_bitset<>> filesBits = boost::make_shared<dynamic_bitset<>>(plain.to_string());
+		DES_ECB ebc_decry_f(key, emptyFilesBits, filesBits);
+		ebc_decry_f.decry_f();
+		plain.reset();
+		std::string str;
+		to_string(*ebc_decry_f.getPlFileBits(), str);
+		plain = std::bitset<2048>(str);
+		out.write((char*)&plain, 2048 / 8);
+		plain.reset();
+		std::cout << cnt << std::endl;
+		cnt++;
+	}
+	in.close();
+	out.close();
 	return 0;
 }

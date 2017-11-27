@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <bitset>
+#include <fstream>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/array.hpp>
 #include <boost/shared_ptr.hpp>
@@ -188,6 +189,10 @@ namespace des {
 		/* 将若干个bitset转化成string，注意，需要在调用该函数前就去掉最后一个bitset的的填充字节 */
 		shared_ptr<std::string>
 			bitsetsToStr(const std::vector<shared_ptr<dynamic_bitset<>>>& bss);
+
+		/* 将多个bitset转化成一个bitset */
+		shared_ptr<dynamic_bitset<>>
+			multi_combiner(const std::vector<shared_ptr<dynamic_bitset<>>>& bss);
 	}
 	
 	class KeyGen

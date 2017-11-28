@@ -1,4 +1,4 @@
-ï»¿#include <iostream>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -17,7 +17,7 @@
 using namespace boost;
 
 int main() {
-	shared_ptr<std::string> pPltxt = make_shared<std::string>("hello, world!ä½ å¥½ï¼Œæ–°ä¸–ç•Œï¼sddddddddddddddddddddddddddddddddddddddddddddddddddd");
+	shared_ptr<std::string> pPltxt = make_shared<std::string>("hello, world!ÄãºÃ£¬ĞÂÊÀ½ç£¡");
 	shared_ptr<std::string> pEmptyStr = make_shared<std::string>();
 	dynamic_bitset<> key(std::string("1010101010111011000010010001100000100111001101101100110011011101"));
 	dynamic_bitset<> IV(std::string("1010101010111011000010010001100000100111001101101100110011011101"));
@@ -61,12 +61,14 @@ int main() {
 	DES_CTR ctr_decry(key, IV, pEmptyStr, ctr_encry.getCitxt());
 	ctr_decry.decry();
 	std::cout << *ctr_decry.getPltxt() << std::endl;
-
+	
+	/*
 	std::ifstream in;
 	std::ofstream out;
 	shared_ptr<dynamic_bitset<>> filesBits = make_shared<dynamic_bitset<>>(2048);
 	shared_ptr<dynamic_bitset<>> emptyFilesBits = make_shared<dynamic_bitset<>>();
 
+	
 	std::bitset<2048> plain; //256 B
 	in.open("C://Users//Libre//Desktop//pl.png", std::ios::binary);
 	out.open("C://Users//Libre//Desktop//tmp.txt");
@@ -109,5 +111,6 @@ int main() {
 	}
 	in.close();
 	out.close();
+	*/
 	return 0;
 }

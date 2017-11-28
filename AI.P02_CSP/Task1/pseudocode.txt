@@ -1,0 +1,28 @@
+﻿class cons:
+    data target_sum
+    data cons_cells_list
+
+    func satisfied()
+        return bool
+    
+global data map<cell, curdom>
+global data assigned[]  //bool
+global data GAC_Queue   //list, queue doesn't support 
+
+func findsupport_(a cons, assigned var):
+    data vec unassigned_vars_of_the_cons
+    remain_sum = cons.target - var.value
+    flag = false;
+    backtrack(vec, cursum, local_curdom = copy_of_curdom, tar, index, flag);     //cursum = 0, index = 0
+    return flag;
+
+func backtrack(vec_of_unassigned_var, cursum, target, index, flag):
+    if (index == vec.size() - 1):  //last var
+        for i in range(len(vec[index].curdom)):
+            if (cursum + vec[index].curdom[i] == target):
+                flag = true;
+                return;
+    for i in range(len(vec[index].curdom)):
+        if (cursum += vec[index].curdom[i] < target):
+            backtrack(vec_of_unassigned_var, cursum + vec[index].curdom[i], target, index + 1);
+    return

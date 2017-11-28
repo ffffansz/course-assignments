@@ -1,5 +1,6 @@
 import copy
 
+
 class Queue(object):
     def __init__(self):
         self.itemlist = []
@@ -20,11 +21,13 @@ class Queue(object):
         while not self.itemlist:
             self.pop()
 
+
 class Constraint(object):
     def __init__(self, contpos, goal, selfpos=None):
         self.pos = selfpos        # The constraint's position (for show the board)
         self.contpos = contpos    # A tuple of positions limited by the constraint
         self.goal = goal          # The goal sum
+
 
 class Puzzle(object):
     def __init__(self, *, size=0, cont=None, dom=None):

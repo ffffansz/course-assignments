@@ -149,7 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DES-no-gui.cpp" />
     <ClCompile Include="DesBlock.cpp" />
     <ClCompile Include="DES_CBC.cpp" />
     <ClCompile Include="DES_CFB.cpp" />

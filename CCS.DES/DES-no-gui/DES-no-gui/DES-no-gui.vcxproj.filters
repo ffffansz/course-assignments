@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DES-no-gui.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="test_utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

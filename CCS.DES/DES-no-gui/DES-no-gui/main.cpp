@@ -83,7 +83,11 @@ int main() {
 }
 
 void run_testcase() {
-	std::ofstream log("D://DevFiles/course-assignments/CCS.DES/DES-no-gui/Release/log.txt", std::ios::app);
+	std::ofstream log;
+	log.open(".\\log.txt", std::ios::app);
+	if (!log.is_open()) {
+		std::cout << "log.txt创建失败" << std::endl;
+	}
 	std::string test_str;
 	std::string test_key;
 	std::string test_iv;
@@ -402,7 +406,11 @@ void ecb()
 
 	int c = ch_ed("ECB");
 	if (c == -1)	return;
-	std::ofstream log("D://DevFiles/course-assignments/CCS.DES/DES-no-gui/Release/log.txt", std::ios::app);
+	std::ofstream log;
+	log.open(".\\log.txt", std::ios::app);
+	if (!log.is_open()) {
+		std::cout << "log.txt创建失败" << std::endl;
+	}
 	if (c == 0) {
 		std::string en_str;
 		std::string key_str;
@@ -465,7 +473,7 @@ void ecb()
 		//std::string iv_to_show = bin2hex(test_iv);
 
 		std::cout << "开始DES - " << "ECB解密..." << std::endl;
-		std::cout << "待加密明文：" << de_str << std::endl;
+		std::cout << "待解密密文：" << de_str << std::endl;
 		std::cout << "加/解密密钥：" << key_to_show << std::endl;
 		//std::cout << "加/解密IV：" << iv_to_show << std::endl;
 
@@ -488,7 +496,11 @@ void cfb()
 
 	int c = ch_ed("CFB");
 	if (c == -1)	return;
-	std::ofstream log("D://DevFiles/course-assignments/CCS.DES/DES-no-gui/Release/log.txt", std::ios::app);
+	std::ofstream log;
+	log.open(".\\log.txt", std::ios::app);
+	if (!log.is_open()) {
+		std::cout << "log.txt创建失败" << std::endl;
+	}
 	if (c == 0) {
 		std::string en_str;
 		std::string key_str;
@@ -573,7 +585,7 @@ void cfb()
 		std::string iv_to_show = bin2hex(iv_str);
 
 		std::cout << "开始DES - " << "CFB解密..." << std::endl;
-		std::cout << "待加密明文：" << en_str << std::endl;
+		std::cout << "待解密密文：" << en_str << std::endl;
 		std::cout << "加/解密密钥：" << key_to_show << std::endl;
 		std::cout << "加/解密IV：" << iv_to_show << std::endl;
 
@@ -596,7 +608,11 @@ void ofb()
 
 	int c = ch_ed("OFB");
 	if (c == -1)	return;
-	std::ofstream log("D://DevFiles/course-assignments/CCS.DES/DES-no-gui/Release/log.txt", std::ios::app);
+	std::ofstream log;
+	log.open(".\\log.txt", std::ios::app);
+	if (!log.is_open()) {
+		std::cout << "log.txt创建失败" << std::endl;
+	}
 	if (c == 0) {
 		std::string en_str;
 		std::string key_str;
@@ -681,7 +697,7 @@ void ofb()
 		std::string iv_to_show = bin2hex(iv_str);
 
 		std::cout << "开始DES - " << "OFB解密..." << std::endl;
-		std::cout << "待加密明文：" << en_str << std::endl;
+		std::cout << "待解密密文：" << en_str << std::endl;
 		std::cout << "加/解密密钥：" << key_to_show << std::endl;
 		std::cout << "加/解密IV：" << iv_to_show << std::endl;
 
@@ -704,7 +720,11 @@ void cbc()
 
 	int c = ch_ed("CBC");
 	if (c == -1)	return;
-	std::ofstream log("D://DevFiles/course-assignments/CCS.DES/DES-no-gui/Release/log.txt", std::ios::app);
+	std::ofstream log;
+	log.open(".\\log.txt", std::ios::app);
+	if (!log.is_open()) {
+		std::cout << "log.txt创建失败" << std::endl;
+	}
 	if (c == 0) {
 		std::string en_str;
 		std::string key_str;
@@ -810,9 +830,13 @@ void cbc()
 void ctr()
 {
 
-	int c = ch_ed("CFB");
+	int c = ch_ed("CTR");
 	if (c == -1)	return;
-	std::ofstream log("D://DevFiles/course-assignments/CCS.DES/DES-no-gui/Release/log.txt", std::ios::app);
+	std::ofstream log;
+	log.open(".\\log.txt", std::ios::app);
+	if (!log.is_open()) {
+		std::cout << "log.txt创建失败" << std::endl;
+	}
 	if (c == 0) {
 		std::string en_str;
 		std::string key_str;
@@ -897,7 +921,7 @@ void ctr()
 		std::string iv_to_show = bin2hex(iv_str);
 
 		std::cout << "开始DES - " << "CTR解密..." << std::endl;
-		std::cout << "待加密明文：" << en_str << std::endl;
+		std::cout << "待解密密文：" << en_str << std::endl;
 		std::cout << "加/解密密钥：" << key_to_show << std::endl;
 		std::cout << "加/解密IV：" << iv_to_show << std::endl;
 

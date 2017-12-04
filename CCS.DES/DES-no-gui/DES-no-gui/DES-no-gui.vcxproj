@@ -155,7 +155,7 @@
     <ClCompile Include="DES_CTR.cpp" />
     <ClCompile Include="DES_ECB.cpp" />
     <ClCompile Include="DES_OFB.cpp" />
-    <ClCompile Include="test_utility.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DesBlock.h" />

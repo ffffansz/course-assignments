@@ -107,9 +107,9 @@ class DecryWin(QWidget, Ui_decryWin):
         n = int(n)
 
         cs = str(self.cipher_textedit.toPlainText())
-        if not cs.isdigit():
-            self.cipher_textedit.setText('请输入合法的密文！')
-            return
+        # if not cs.isdigit():
+        #   self.cipher_textedit.setText('请输入合法的密文！')
+        #    return
 
         ret = RSA_decry(cs, (d, n))     # str
         self.decry_ret_textedit.setText(ret)

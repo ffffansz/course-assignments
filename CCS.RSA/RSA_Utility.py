@@ -68,3 +68,24 @@ def genBigPrime(n, m):
         randomOddNum = genRandomBitNum(n)
         if primalityTest(randomOddNum, m):
             return randomOddNum
+
+
+# Calculate the multiplicative inverse of the given number in the given domain
+def calMulInverseNum(num, domain):
+    r1, r2 = domain, num
+    t1, t2 = 0, 1
+    r, t = None, None
+    while r2 != 0:
+        q = r1 // r2
+        r = r1 - q * r2
+        t = t1 - q * t2
+        r1 = r2
+        r2 = r
+        t1 = t2
+        t2 = t
+    if r1 == 1:
+        if (t1 < 0):
+            return t1 + domain
+        return t1
+    else:
+        return domain + 1

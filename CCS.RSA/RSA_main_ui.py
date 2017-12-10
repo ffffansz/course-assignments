@@ -127,9 +127,8 @@ class DecryWin(QWidget, Ui_decryWin):
 
 
 if __name__ == '__main__':
-    # QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
-    app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     mainwin = Mainwin()
     mainwin.show()
     sys.exit(app.exec_())

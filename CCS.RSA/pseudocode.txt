@@ -1,4 +1,3 @@
-产生两个大素数e和d，还有一个大素数n
 (e, n)是公钥，d是私钥
 
 C = P^e mod n
@@ -29,5 +28,4 @@ func genBigPrime(n)  //产生一个n bits的大素数
 func genRandomBitNum(n)    //产生一个n bits的奇数随机数（要确保是奇数，最高位和最低位必须为1）
 func primalityTest(n, m) //测试一个n是否为素数，使用Miller-Rabin+整除性检验，非素数通过测试的概率为(1/4)^m（即执行m次Miller-Rabin素性测试）
 func fastExpWithMod(a, e, n)  //快速幂运算计算a^e mod n
-func euler(n)  //计算Euluer(n)
 func modInverse(a, n)  //计算a mod n的逆

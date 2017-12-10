@@ -218,14 +218,3 @@ def RSA_decry(cipher_str, private_key):
     # ret_strlist = [valid_int2str(i) for i in ret_intlist]
     return ''.join(ret_strlist)
 
-
-if __name__ == '__main__':
-    s = '今天很不幸，被我们老大challenge了。他问Wo是否跑完了所有的CASE，是否知道在系统中中文字符占用3个字节。就我所知道的情况，中文字符只暂用两个字节，DEV也如是这样说。'
-    key = genKeys(512)
-    pub_key = key[0]
-    pri_key = key[1]
-    c = RSA_encry(s, pub_key)
-    p = RSA_decry(c, pri_key)
-    print(c)
-    assert s == p
-    print(p)

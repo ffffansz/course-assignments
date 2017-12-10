@@ -79,7 +79,7 @@ class Ui_decryWin(object):
     def retranslateUi(self, decryWin):
         _translate = QtCore.QCoreApplication.translate
         decryWin.setWindowTitle(_translate("decryWin", "Form"))
-        self.label_2.setText(_translate("decryWin", "RSA 加密"))
+        self.label_2.setText(_translate("decryWin", "RSA 解密"))
         self.label.setText(_translate("decryWin", "请输入要解密的密文："))
         self.label_3.setText(_translate("decryWin", "请输入d："))
         self.label_4.setText(_translate("decryWin", "请输入n："))

@@ -7,6 +7,7 @@ TIMEOUT = -1
 CLOSED = -2
 EMPTY = -3    # means read empty data
 
+
 # param: sock, dict
 # return: 1-success TIMEOUT-timeout CLOSED-closed EMPTY-empty
 def send(sock, dic):  # take dict as argument!!
@@ -18,6 +19,7 @@ def send(sock, dic):  # take dict as argument!!
         else:
             return TIMEOUT
     return 1
+
 
 # param: sock
 # return: table-success TIMEOUT-timeout CLOSED-closed EMPTY-empty
@@ -64,6 +66,7 @@ def read(sock):
     # 解析数据
     return unpack(data)
 
+
 # 功能：对输入的dict使用json转换 使用base64加密 加上长度信息
 # 输入：dict
 # 输出：string
@@ -84,7 +87,8 @@ def pack(dic):
     else:
         string = "000"
     return string
-    
+
+
 # 功能：对输入的string（不含长度信息） 进行base64解密 再用json转换 得到dict
 # 输入string
 # 输出dict

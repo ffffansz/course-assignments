@@ -47,7 +47,7 @@ class birdTouchHandler(cocos.layer.Layer):
         'modifiers' is a bitwise or of pyglet.window.key modifier constants
            (values like 'SHIFT', 'OPTION', 'ALT')
         """
-        #点击屏幕时，如果小鸟没有到达游戏顶部，给它一个上升速度
+        # 点击屏幕时，如果小鸟没有到达游戏顶部，给它一个上升速度
         if self.spriteBird.position[1] < common.visibleSize["height"]-20:
             self.spriteBird.velocity = (0, upSpeed)
 
@@ -58,13 +58,13 @@ def addTouchHandler(gameScene, isGamseStart, spriteBird):
         handler = birdTouchHandler(spriteBird)
         gameScene.add(handler, z=50, name=HANDLER_NAME)
 
-#remove touch events
+# remove touch events
 def removeBirdTouchHandler(gameScene):
     try:
         gameScene.remove(HANDLER_NAME)
     except:
         pass
 
-#get spriteBird
+# get spriteBird
 def getSpriteBird():
     return spriteBird

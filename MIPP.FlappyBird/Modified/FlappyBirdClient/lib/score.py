@@ -9,7 +9,7 @@ import game_controller
 spriteScores = {}
 scoreLayer = None
 
-#开始游戏后显示当前得分
+# 开始游戏后显示当前得分
 def createScoreLayer(gameLayer):
 	global scoreLayer
 	scoreLayer = gameLayer

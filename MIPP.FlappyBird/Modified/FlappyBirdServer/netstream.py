@@ -5,7 +5,7 @@ import socket, json, base64
 # constants
 TIMEOUT = -1
 CLOSED = -2
-EMPTY = -3    #means read empty data
+EMPTY = -3    # means read empty data
 
 # param: sock, dict
 # return: 1-success TIMEOUT-timeout CLOSED-closed EMPTY-empty

@@ -1,6 +1,8 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
-import socket, json, base64
+import base64
+import json
+import socket
 
 # constants
 TIMEOUT = -1
@@ -75,7 +77,7 @@ def pack(dic):
     # 加上头部信息
     length = len(jsonData)
     string = None
-    if length < 10 and length > 0:
+    if 0 < length < 10:
         string = "00"+str(length)+jsonData
     elif length < 100:
         string = "0"+str(length)+jsonData

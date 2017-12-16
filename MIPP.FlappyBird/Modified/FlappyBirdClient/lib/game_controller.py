@@ -111,10 +111,10 @@ def singleGameReady():
 		# ready layer的回调函数
 		def singleGameStart(self, eventType, x, y):
 			isGamseStart = True
-			spriteBird.gravity = gravity #gravity is from bird.py
+			spriteBird.gravity = gravity  # gravity is from bird.py
 			# handling bird touch events
 			addTouchHandler(gameScene, isGamseStart, spriteBird)
-			score = 0   #分数，飞过一个管子得到一分
+			score = 0    # 分数，飞过一个管子得到一分
 			global startTime
 			startTime = time.time()
 			# add moving pipes
@@ -319,7 +319,6 @@ class RestartMenu(Menu):
 		gameLayer.add(difficultyMenu, z=20, name="difficulty_button")
 
 
-
 class SingleGameStartMenu(Menu):#开始游戏菜单
 	def __init__(self):  
 		super(SingleGameStartMenu, self).__init__()
@@ -408,9 +407,9 @@ def showRecord():
 			items = [
 				#(ImageMenuItem(common.load_image("button_record.png"), None)),
 				(MenuItem(" ", None)),
-				(MenuItem("Rank : " + str(user.user.file[user.user.username]['rank']), None)),
-				(MenuItem(" ", None)),
-				(MenuItem("Score Time     Data    ", None))
+				#(MenuItem("Rank : " + str(user.user.file[user.user.username]['rank']), None)),
+				#(MenuItem(" ", None)),
+				(MenuItem("Score Time     Date    ", None))
 			]
 			count = 0
 			for i in user.user.file[user.user.username]['record']:
@@ -445,7 +444,7 @@ def requestRank():
 	showContent("Requesting rank......")
 	user.requestRank()
 
-def showRank(rank):
+def showRank(rank, myRank):
 	try:
 		gameLayer.remove("start_button")
 		roll_back = "start_button"
@@ -468,6 +467,8 @@ def showRank(rank):
 			self.roll_bacl = roll_back
 			items = [
 				#(ImageMenuItem(common.load_image("button_record.png"), None)),
+				(MenuItem(" ", None)),
+				(MenuItem("Rank : " + str(myRank), None)),
 				(MenuItem(" ", None)),
 				(MenuItem("Username Score", None))
 			]

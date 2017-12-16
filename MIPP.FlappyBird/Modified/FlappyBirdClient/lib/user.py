@@ -37,7 +37,8 @@ def userLogin(username, password):
 def requestRank():
 	sendData = {
 		'sid' : network.serialID,
-		'type' : "requestRank"
+		'type' : "requestRank",
+		'username' : user.username
 	}
 	network.clientSend(sendData)
 
@@ -69,7 +70,7 @@ def userDataProcess(data):
 	elif data['type'] == "Unknown message":
 		game_controller.showContent("Server receive unknown message")
 	elif data['type'] == "rank":
-		game_controller.showRank(data['rank'])
+		game_controller.showRank(data['rank'], data['myRank'])
 	elif data['type'] == "error":
 		game_controller.showContent(data['content'])
 	else:

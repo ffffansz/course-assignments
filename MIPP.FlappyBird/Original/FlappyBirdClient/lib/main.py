@@ -7,13 +7,13 @@ from game_controller import *
 import common
 
 def main():
-    #initialize director
-    director.init( width=common.visibleSize["width"], height=common.visibleSize["height"], caption="Flappy Bird")
+    # initialize director
+    director.init(width=common.visibleSize["width"], height=common.visibleSize["height"], caption="Flappy Bird")
 
-    #turn off display FPS
-    # director.show_FPS = True
+    # turn off display FPS
+    director.show_FPS = True
     
-    #run
+    # run
     gameScene = Scene()
     game_start(gameScene)
 

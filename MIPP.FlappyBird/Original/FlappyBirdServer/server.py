@@ -50,7 +50,7 @@ while inputs:
 						print str(r.getpeername()) + 'disconnected'
 						disconnected_list.append(r.getpeername())
 				else:  # 根据收到的request发送response
-					#公告
+					# 公告
 					if 'notice'in recvData:
 						number = recvData['sid']
 						print 'receive notice request from user id:', number

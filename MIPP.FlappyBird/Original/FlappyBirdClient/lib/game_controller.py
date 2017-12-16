@@ -126,12 +126,12 @@ def backToMainMenu():
     gameLayer.add(restartButton, z=50)
 
 def showNotice():
-    connected = connect(gameScene) # connect is from network.py
+    connected = connect(gameScene)  # connect is from network.py
     if not connected:
         content = "Cannot connect to server"
         showContent(content)
     else:
-        request_notice() # request_notice is from network.py
+        request_notice()  # request_notice is from network.py
 
 def showContent(content):
     removeContent()
@@ -154,7 +154,7 @@ class RestartMenu(Menu):
                 (ImageMenuItem(common.load_image("button_restart.png"), self.initMainMenu)),
                 (ImageMenuItem(common.load_image("button_notice.png"), showNotice))
                 ]  
-        self.create_menu(items,selected_effect=zoom_in(),unselected_effect=zoom_out())
+        self.create_menu(items, selected_effect=zoom_in(), unselected_effect=zoom_out())
 
     def initMainMenu(self):
         gameScene.remove(gameLayer)

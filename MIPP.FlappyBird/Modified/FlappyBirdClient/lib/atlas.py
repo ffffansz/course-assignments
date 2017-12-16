@@ -81,7 +81,7 @@ atlas["title"]={"width":178, "height":48, "x":702, "y":182}
 atlas["tutorial"]={"width":114, "height":98, "x":584, "y":182}
 atlas["white"]={"width":32, "height":32, "x":584, "y":448}
 
-#获得atlas sprite
+# 获得atlas sprite
 def createAtlasSprite(name):
     sprite = cocos.sprite.Sprite(common.load_image(name+".png"))
     return sprite

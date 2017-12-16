@@ -9,7 +9,7 @@ import common
 
 def main():
     # initialize director 这是窗口宽、高、名，接口函数
-    director.init( width=common.visibleSize["width"], height=common.visibleSize["height"], caption="Flappy Bird")
+    director.init(width=common.visibleSize["width"], height=common.visibleSize["height"], caption="Flappy Bird")
 
     # turn off display FPS
     # director.show_FPS = True

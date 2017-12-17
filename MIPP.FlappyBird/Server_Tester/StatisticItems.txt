@@ -1,29 +1,31 @@
+所有的耗时总和只统计了成功情况下的耗时
 
-data 最小注册/登陆/Notice/RequestRank延迟
-    add Robot.MinSignUpDelay
-    每次执行相应操作结束后，更新最小值
-data 最大注册/登陆/Notice/RequestRank延迟
-    add Robot.MaxSignUpDelay
-    每次执行相应操作结束后，更新最小值
-data 平均注册/登陆/Notice/RequestRank延迟（成功）
-    add Robot.SuccessfulSignUpDelay    # 收到服务器响应后再更新
-    add Robot.SuccessfulSignUpCnt      # 收到服务器响应后更新
-data 注册/登陆/Notice/RequestRank丢包率
-    add Robot.FailureSignUpCnt         # 未收到服务器响应的数量
+连接
+    连接成功的机器人数量
+    连接成功率 = 连接成功次数 / 总连接次数
+    最大连接耗时
+    最小连接耗时
+    平均连接耗时 = 连接耗时总和 / 连接成功次数
 
-data
+接收SID
+    接收SID成功的机器人数量
+    接收SID成功率 = 接收SID成功次数 / 总接收次数
+    最大接收耗时
+    最小接收耗时
+    平均接收耗时 = 接收耗时总和 / 接收SID成功次数
 
---------------------------------------------------------------------
+注册/登陆
+    注册成功的机器人数量
+    注册成功率 = 注册成功次数 / 总注册次数
+    最大注册耗时
+    最小注册耗时
+    平均注册耗时 = 注册耗时总和 / 注册成功次数
 
-每个Robot可能的行为：
+Notice/RequestRank
+    Notice成功率 = Notice成功次数 / 总Notice次数
+    最大Notice耗时
+    最小Notice耗时
+    平均Notice耗时 = Notice耗时总和 / Notice成功次数
 
-连接：
-    连接服务器
-        连接成功：执行后续动作
-        连接失败：重新尝试连接
-        连接N次失败：Abort
-
-注册：
-    发送注册请求
-        注册成功
-        请求失败：重新尝试请求
+完成
+    机器人任务完成率 = 执行完所有任务并正常退出的机器人数量 / 机器人总数量

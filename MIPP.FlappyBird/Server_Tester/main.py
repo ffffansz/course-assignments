@@ -8,36 +8,58 @@ import os
 def VPrint(content):
     print json.dumps(content, encoding='utf-8', ensure_ascii=False, indent=1)
 
-def formatPrint(dict, numOfRetries):
+def formatPrint(data):
     # 格式化输出统计数据
-    mat = '{:32}{:20}{:'
-    print mat.format('统计数据项', '数值', '单位')
-    print mat.format('机器人数量', dict['RobotsCnt'])
+    mat = '{:<40}\t{:<20}'
+    print mat.format('Item', 'Data')
+    print
+    print mat.format('RobotsNum', data['RobotsCnt'])
 
     # Connect Info
     print '----------------------------------------'
-    print mat.format('Connect次数', dict['ConnectCnt'])
-    print mat.format('ConnectFailure次数', dict['ConnectionFailureCnt'])
-    print mat.format('ConnectAbort的机器人数量', dict['ConnectAbortCnt'])
-
-    print mat.format('Connect成功平均所需的连接次数',
-        round(dict['ConnectCnt'] - numOfRetries * dict['ConnectAbortCnt']  / dict['RobotsCnt'] - dict['ConnectAbortCnt'], 2))
-    print mat.format('平均Connect响应延迟', round(dict['ConnectDelaySum'] / dict['ConnectCnt'], 2))
-    print mat.format('最大Connect响应延迟', round(dict['MaxConnectDelay'], 2))
-    print mat.format('最小Connect响应延迟', round(dict['MinConnectDelay'], 2))
+    # Connect成功的机器人数量
+    print mat.format('ConnectSuccessNum', data['ConnectSuccessCnt'])
+    # Connect成功率
+    print mat.format('ConnectSuccessRate', round(float(data['ConnectSuccessCnt']) / data['ConnectCnt'], 5))
+    # 最大Connect耗时
+    print mat.format('MaxConnectDelay', round(data['MaxConnectDelay'], 5))
+    # 最小Connect耗时
+    print mat.format('MinConnectDelay', round(data['MinConnectDelay'], 5))
+    # 平均Connect耗时（仅针对成功的Connect，下同）
+    print mat.format('AvgConnectDelay', round(data['ConnectDelaySum'] / data['ConnectSuccessCnt'], 5))
 
     # Recv SID Info
     print '----------------------------------------'
-    print mat.format('RecvSID次数', dict['RecvSidCnt'])
-    # print mat.format('RecvSIDFailure次数', dict['RecvSidFaliureCnt'])
-    print mat.format('RecvSIDAbort的机器人数量', dict['RecvSidAbortCnt'])
-    print mat.format('平均RecvSID延迟', round(dict['RecvSidDelaySum'] / dict['RecvSidCnt']), 2)
-    print mat.format('最大RecvSID延迟', round(dict['MaxRecvSidDelay'], 2))
-    print mat.format('最小RecvSID延迟', round(dict['MinRecvSidDelay'], 2))
+    print mat.format('RecvSIDSuccessNum', data['RecvSidSuccessCnt'])
+    print mat.format('RecvSIDSuccessRate', round(float(data['RecvSidSuccessCnt']) / data['RecvSidCnt'], 5))
+    print mat.format('MaxRecvSIDDelay', round(data['MaxRecvSidDelay'], 5))
+    print mat.format('MinRecvSIDDelay', round(data['MinRecvSidDelay'], 5))
+    print mat.format('AvgRecvSIDDelay', round(data['RecvSidDelaySum'] / data['RecvSidSuccessCnt']), 5)
 
-    # Sign up Info
+    # Sign up or Login Info
     print '----------------------------------------'
-    print mat.format()
+    print mat.format('SignUp/LoginSuccessNum', data['SignUpOrLoginSuccessCnt'])
+    print mat.format('SignUp/LoginSuccessRate', round(float(data['SignUpOrLoginSuccessCnt']) / data['SignUpOrLoginCnt'], 5))
+    print mat.format('MaxSignUp/LoginDelay', round(data['MaxSignUpOrLoginDelay'], 5))
+    print mat.format('MinSignUp/LoginDelay', round(data['MinSignUpOrLoginDelay'], 5))
+    print mat.format('AvgSignUp/LoginDelay', round(data['SignUpOrLoginDelaySum'] / data['SignUpOrLoginSuccessCnt']), 5)
+
+    # Notice Info
+    print '----------------------------------------'
+    print mat.format('NoticeSuccessRate', round(float(data['NoticeSuccessCnt']) / data['NoticeCnt'], 5))
+    print mat.format('MaxNoticeDelay', round(data['MaxNoticeDelay'], 5))
+    print mat.format('MinNoticeDelay', round(data['MinNoticeDelay'], 5))
+    print mat.format('AvgNoticeDelay', round(data['NoticeDelaySum'] / data['NoticeSuccessCnt']), 5)
+
+    # Request Rank Info
+    print '----------------------------------------'
+    print mat.format('RequestRankSuccessRate', round(float(data['RequestRankSuccessCnt']) / data['RequestRankCnt'], 5))
+    print mat.format('MaxRequestRankDelay', round(data['MaxRequestRankDelay'], 5))
+    print mat.format('MinRequestRankDelay', round(data['MinRequestRankDelay'], 5))
+    print mat.format('AvgRequestRankDelay', round(data['RequestRankDelaySum'] / data['RequestRankSuccessCnt']), 5)
+
+    print '----------------------------------------'
+    print mat.format('MissionCompleteRate', round(float(data['MissionCompRobotsCnt']) / data['RobotsCnt']))
 
 def main():
     if os.path.exists('F:\DevFiles\course-assignments\MIPP.FlappyBird\Modified\FlappyBirdServer\user.dat'):
@@ -45,22 +67,23 @@ def main():
     host = "127.0.0.1"
     port = 9234
     nameRange = 1000
-    robotsNum = 500
+    robotsNum = 50
+    randomActionsNum = 20
+    eachActionRetries = 32
 
     # 生成robotsNum个机器人，机器人的用户名取值范围是(0, nameRange)
     robots = [robot.Robot((host, port), nameRange) for i in range(robotsNum)]
     for r in robots:
-        r.initActionsSeq(50)
+        r.initActionsSeq(randomActionsNum)
     for r in robots:
-        r.run(50)
+        r.run(eachActionRetries)
     for r in robots:
         r.shutdown()
     ret = exportData()
-    VPrint(ret)
+    formatPrint(ret)
 
 def exportData():
     return robot.Robot.exportData()
-
 
 if __name__ == '__main__':
     main()

@@ -26,6 +26,7 @@ def send(sock, dic):  # take dict as argument!!
 def read(sock):
     # 读取三位的长度信息
     sock.setblocking(0)
+    sock.settimeout(1)
     try:
         length = sock.recv(3)
     except socket.error as (err_code, err_message):

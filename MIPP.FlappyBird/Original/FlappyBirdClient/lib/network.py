@@ -3,7 +3,7 @@ import socket, netstream
 connected = False
 sock = None
 
-serialID = 0            #server向客户端发回的序列ID号
+serialID = 0            # server向客户端发回的序列ID号
 isSet = False
 
 def connect(gameScene):
@@ -37,7 +37,7 @@ def connect(gameScene):
 
         if 'notice_content' in data:
             import game_controller
-            game_controller.showContent(data['notice_content']) #showContent is from game_controller
+            game_controller.showContent(data['notice_content'])  # showContent is from game_controller
 
     gameScene.schedule(receiveServer)
     return connected

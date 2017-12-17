@@ -4,153 +4,411 @@
 import random
 import socket
 import time
+import netstream
 
+INF = float(pow(2, 32))
+ABORT = -1
+TIMEOUT = -2
 
 class Robot:
 
-    robots_num = 0            # 机器人总数量
-    registered_robot = []     # 注册过的机器人
+    RobotsCnt = 0                     # 生成的机器人总数
+    RegisteredRobotsName = list()     # 已注册过的账户名
 
-    login_num = 0             # 执行登陆的次数
-    signUp_num = 0
-    notice_num = 0
-    requestRank_num = 0
-    loginDelay_sum = 0.       # 登陆延迟的总和
-    signUpDelay_sum = 0.
-    noticeDelay_sum = 0.
-    requestRankDelay_sum = 0.
+    # connect to server
+    ConnectCnt = 0                    # 尝试连接的次数
+    ConnectionFailureCnt = 0          # 连接失败的次数
+    ConnectDelaySum = 0.              # 连接延迟的总和
+    MinConnectDelay = INF             # 最小连接延迟
+    MaxConnectDelay = -INF            # 最大连接延迟
 
-    connect_num = 0           # 尝试连接的次数
-    connect_failure_num = 0   # 连接失败的次数
-    connectDelay_sum = 0.     # 连接延迟总和
-    aborted_robot_num = 0     # 尝试连接十次未连接成功的机器人数量
-    # averageLoginDelay = 0
-    # averageSignUpDelay = 0
-    # averageNoticeDelay = 0
-    # averageRequestRankDelay = 0
+    # receive sid
+    RecvSidCnt = 0
+    RecvSidFaliureCnt = 0
+    RecvSidDelaySum = 0.
+    MinRecvSidDelay = INF
+    MaxRecvSidDelay = -INF
 
-    def __init__(self, targetServer, randomActionsCnt):
-        Robot.robots_num += 1
+    # Sign up
+    SignUpCnt = 0
+    SignUpDelaySum = 0.
+    MinSignUpDelay = INF
+    MaxSignUpDelay = -INF
+
+    # Log in
+    LoginCnt = 0
+    LoginDelaySum = 0.
+    MinLoginDelay = INF
+    MaxLoginDelay = -INF
+
+    # Notice
+    NoticeCnt = 0
+    NoticeDelaySum = 0.
+    MinNoticeDelay = INF
+    MaxNoticeDelay = -INF
+
+    # Request rank
+    RequestRankCnt = 0
+    RequestRankDelaySum = 0.
+    MinRequestRankDelay = INF
+    MaxRequestRankDelay = -INF
+
+    # Aborted Robots Counter
+    ConnectAbortCnt = 0                  # 在连接步骤上退出的Robot
+    RecvSidAbortCnt = 0
+    SignUpAbortCnt = 0                   # 在注册步骤上退出的Robot
+    LoginAbortCnt = 0
+    NoticeAbortCnt = 0
+    RequestRankAbortCnt = 0
+
+    def __init__(self, targetServer, robotsNameRange):
+        Robot.RobotsCnt += 1
         self.targetServer = targetServer     # a tuple (host, port)
-        self.username = 'tester_' + str(random.randint(0, 10000))
+        self.username = 'tester_' + str(random.randint(0, robotsNameRange))
         self.password = self.username
         self.registered_before = True
-        if self.username not in Robot.registered_robot:
+        if self.username not in Robot.RegisteredRobotsName:
             self.registered_before = False
-            Robot.registered_robot.append(self.username)
-        self.randomActionCnt = randomActionsCnt
+            Robot.RegisteredRobotsName.append(self.username)
+        # self.randomActionCnt = randomActionsCnt
         self.actions = list()
         self.sock = socket.socket()
         self.connected = False
         self.sid = None
-        # self.registered = False
-        # self.loginDelay = 0
-        # self.signUpDelay = 0
-        # self.noticeDelay = 0
-        # self.requestRankDelay = 0
+        self.errcode = ''          # Robot运行状态
 
-    def initialize(self):
+    def initActionsSeq(self, randomActionsNum):
         # 初始化当前robot的动作序列
-
+        self.actions.append(self.connect)
+        self.actions.append(self.recvsid)
         if not self.registered_before:
             self.actions.append(self.signUp)
-        self.actions.append(self.login)
+        else:
+            self.actions.append(self.login)
 
-        # randomActionCnt次随机动作，可选动作包括：notice, requestRank, singleGame
-        for i in range(self.randomActionCnt):
+        # randomActionsNum次随机动作，可选动作包括：notice, requestRank, singleGame
+        for i in range(randomActionsNum):
             op = random.randint(0, 2)
             if op == 0:
                 self.actions.append(self.notice)
-            elif op == 2:
+            elif op == 1:
                 self.actions.append(self.requestRank)
-            elif op == 3:
+            elif op == 2:
                 self.actions.append(self.singleGame)
 
-        self.actions.append(self.logout)
+        # self.actions.append(self.logout)
+        # self.actions.append(self.shutdown)
 
     @staticmethod
     def resetData():
         # 重置统计数据
-        Robot.robots_num = 0  # 机器人总数量
-        Robot.registered_robot = []  # 注册过的机器人
+        Robot.RobotsCnt = 0
+        Robot.RegisteredRobotsName = list()
 
-        Robot.login_num = 0  # 执行登陆的次数
-        Robot.signUp_num = 0
-        Robot.notice_num = 0
-        Robot.requestRank_num = 0
-        Robot.loginDelay_sum = 0.  # 登陆延迟的总和
-        Robot.signUpDelay_sum = 0.
-        Robot.noticeDelay_sum = 0.
-        Robot.requestRankDelay_sum = 0.
+        # connect to server
+        Robot.ConnectCnt = 0
+        Robot.ConnectionFailureCnt = 0
+        Robot.ConnectSuccessCnt = 0
+        Robot.ConnectDelaySum = 0.
+        Robot.MinConnectDelay = INF
+        Robot.MaxConnectDelay = -INF
 
-        Robot.connect_num = 0  # 尝试连接的次数
-        Robot.connect_failure_num = 0  # 连接失败的次数
-        Robot.connectDelay_sum = 0.  # 连接延迟总和
-        Robot.aborted_robot_num = 0  # 尝试连接十次未连接成功的机器人数量
+        # receive sid
+        Robot.RecvSidCnt = 0
+        Robot.RecvSidFaliureCnt = 0
+        Robot.RecvSidDelaySum = 0.
+        Robot.MinRecvSidDelay = INF
+        Robot.MaxRecvSidDelay = -INF
+
+        # Sign up
+        Robot.SignUpCnt = 0
+        Robot.SignUpDelaySum = 0.
+        Robot.MinSignUpDelay = INF
+        Robot.MaxSignUpDelay = -INF
+
+        # Log in
+        Robot.LoginCnt = 0
+        Robot.LoginDelaySum = 0.
+        Robot.MinLoginDelay = INF
+        Robot.MaxLoginDelay = -INF
+
+        # Notice
+        Robot.NoticeCnt = 0
+        Robot.NoticeDelaySum = 0.
+        Robot.MinNoticeDelay = INF
+        Robot.MaxNoticeDelay = -INF
+
+        # Request rank
+        Robot.RequestRankCnt = 0
+        Robot.RequestRankDelaySum = 0.
+        Robot.MinRequestRankDelay = INF
+        Robot.MaxRequestRankDelay = -INF
+
+        # Aborted Robots Counter
+        Robot.ConnectAbortCnt = 0
+        Robot.RecvSidAbortCnt = 0
+        Robot.SignUpAbortCnt = 0
+        Robot.LoginAbortCnt = 0
+        Robot.NoticeAbortCnt = 0
+        Robot.RequestRankAbortCnt = 0
 
     @staticmethod
     def exportData():
         # 导出统计数据，返回类型：Dict
         return {
-            'Robots_num'
-            'SignUp_num': Robot.signUp_num,
-            'Login_num': Robot.login_num,
-            'Notice_num': Robot.notice_num,
-            'Connect_num': Robot.connect_num,
-            'AvgSignUpDelay': Robot.signUpDelay_sum / Robot.signUp_num,
-            'AvgLoginDelay': Robot.loginDelay_sum / Robot.login_num,
-            'AvgNoticeDelay': Robot.noticeDelay_sum / Robot.notice_num,
-            'AvgRequestRankDelay': Robot.requestRankDelay_sum / Robot.requestRank_num,
-            'AvgConnectFailure_num': float(Robot.connect_failure_num) / Robot.connect_num,
-            'AvgSuccessfulConnectDelay': Robot.connectDelay_sum / (Robot.connect_num - Robot.connect_failure_num)
-            }
+            'RobotsCnt': Robot.RobotsCnt,
+            'RegisteredRobotsName': Robot.RegisteredRobotsName,
 
-    def run(self):
+            # connect to server
+            'ConnectCnt': Robot.ConnectCnt,
+            'ConnectFailureCnt': Robot.ConnectionFailureCnt,
+            'ConnectDelaySum': Robot.ConnectDelaySum,
+            'MinConnectDelay': Robot.MinConnectDelay,
+            'MaxConnectDelay': Robot.MaxConnectDelay,
+
+            # receive sid
+            'RecvSidCnt': Robot.RecvSidCnt,
+            'RecvSidFaliureCnt': Robot.RecvSidFaliureCnt,
+            'RecvSidDelaySum': Robot.RecvSidDelaySum,
+            'MinRecvSidDelay': Robot.MinRecvSidDelay,
+            'MaxRecvSidDelay': Robot.MaxRecvSidDelay,
+
+            # Sign up
+            'SignUpCnt': Robot.SignUpCnt,
+            'SignUpDelaySum': Robot.SignUpDelaySum,
+            'MinSignUpDelay': Robot.MinSignUpDelay,
+            'MaxSignUpDelay': Robot.MaxSignUpDelay,
+
+            # Log in
+            'LoginCnt': Robot.LoginCnt,
+            'LoginDelaySum': Robot.LoginDelaySum,
+            'MinLoginDelay': Robot.MinLoginDelay,
+            'MaxLoginDelay': Robot.MaxLoginDelay,
+
+            # Notice
+            'NoticeCnt': Robot.NoticeCnt,
+            'NoticeDelaySum': Robot.NoticeDelaySum,
+            'MinNoticeDelay': Robot.MinNoticeDelay,
+            'MaxNoticeDelay': Robot.MaxNoticeDelay,
+
+            # Request rank
+            'RequestRankCnt': Robot.RequestRankCnt,
+            'RequestRankDelaySum': Robot.RequestRankDelaySum,
+            'MinRequestRankDelay': Robot.MinRequestRankDelay,
+            'MaxRequestRankDelay': Robot.MaxRequestRankDelay,
+
+            # Aborted Robots Counter
+            'ConnectAbortCnt': Robot.ConnectAbortCnt,
+            'RecvSidAbortCnt': Robot.RecvSidAbortCnt,
+            'SignUpAbortCnt': Robot.SignUpAbortCnt,
+            'LoginAbortCnt': Robot.LoginAbortCnt,
+            'NoticeAbortCnt': Robot.NoticeAbortCnt,
+            'RequestRankAbortCnt': Robot.RequestRankAbortCnt
+        }
+
+    def run(self, numOfRetries):
         # start running the robot
-
-        reconnect_cnt = 0
-        while (not self.connected) and (reconnect_cnt is not 10):
-            self.connect()
-            if self.connected:
+        for i in range(len(self.actions)):
+            actRet = self.actions[i](numOfRetries)
+            if actRet is not True:
+                self.errcode = actRet
                 break
-            else:
-                reconnect_cnt += 1
-                time.sleep(3)       # 每隔3秒重新尝试连接
-        if reconnect_cnt is 10:
-            Robot.connect_num -= 10
-            Robot.connect_failure_num -= 1
-            Robot.aborted_robot_num += 1
-            return
-        for action in self.actions:
-            action()
 
-    def connect(self):
+    def connect(self, numOfRetries):
         if self.connected:
             return True
-        Robot.connect_num += 1
-        try:
-            self.sock.connect(self.targetServer)
-        except:
-            Robot.connect_failure_num += 1
-            return False
-        self.connected = True
-        return True
+        # start the timer
+        end = None
+        start = time.time()
+        for i in range(numOfRetries):
+            Robot.ConnectCnt += 1
+            try:
+                self.sock.connect(self.targetServer)
+                self.connected = True
+                break
+            except:
+                Robot.ConnectionFailureCnt += 1
 
-    def login(self):
-        pass
+        if self.connected is False:
+            Robot.ConnectAbortCnt += 1
+            return 'ConnectError'
+        else:
+            end = time.time()
+            delay = end - start
+            Robot.ConnectDelaySum += delay
+            Robot.MinConnectDelay = min(Robot.MinConnectDelay, delay)
+            Robot.MaxConnectDelay = max(Robot.MaxConnectDelay, delay)
+            return True
 
-    def signUp(self):
-        pass
+    def recvsid(self, numOfRetries):
+        end = None
+        # start the timer
+        start = time.time()
+        for i in range(numOfRetries):
+            Robot.RecvSidCnt += 1
+            rd = self.recv()
+            if rd == netstream.CLOSED:
+                break
+            elif rd == netstream.EMPTY or rd == netstream.TIMEOUT:
+                continue
+            elif 'sid' in rd:
+                # end the timer
+                end = time.time()
+                self.sid = rd['sid']
+                break
+        if end is None:
+            Robot.RecvSidAbortCnt += 1
+            return 'RecvSidError'
+        else:
+            delay = end - start
+            Robot.RecvSidDelaySum += delay
+            Robot.MinRecvSidDelay = min(Robot.MinRecvSidDelay, delay)
+            Robot.MaxRecvSidDelay = max(Robot.MaxRecvSidDelay, delay)
+            return True
 
-    def singleGame(self):
+    def recv(self):
+        if not self.connected:
+            return
+        data = netstream.read(self.sock)
+        return data
+        # return CLOSED, TIMEOUT, EMPTY, or true data
+
+    def login(self, numOfRetries):
+        end = None
+        # start the timer
+        start = time.time()
+        for i in range(numOfRetries):
+            Robot.LoginCnt += 1
+            sd = {
+                'sid': self.sid,
+                'type': "login",
+                'username': self.username,
+                'password': self.password
+            }
+            netstream.send(self.sock, sd)
+            rd = self.recv()
+            if rd == netstream.CLOSED:
+                break
+            elif rd == netstream.EMPTY or rd == netstream.TIMEOUT:
+                continue
+            elif rd['type'] == 'loginResult' and rd['result'] == 'success':
+                # end the timer
+                end = time.time()
+                break
+        if end is None:
+            Robot.LoginAbortCnt += 1
+            return 'LoginError'
+        else:
+            delay = end - start
+            Robot.LoginDelaySum += delay
+            Robot.MinLoginDelay = min(Robot.MinLoginDelay, delay)
+            Robot.MaxLoginDelay = max(Robot.MaxLoginDelay, delay)
+            return True
+
+    def signUp(self, numOfRetries):
+        end = None
+        # start the timer
+        start = time.time()
+        rd = None
+        for i in range(numOfRetries):
+            Robot.SignUpCnt += 1
+            sd = {
+                'sid': self.sid,
+                'type': "signUp",
+                'username': self.username,
+                'password': self.password
+            }
+            netstream.send(self.sock, sd)
+            rd = self.recv()
+            if rd == netstream.CLOSED:
+                break
+            elif rd == netstream.EMPTY or rd == netstream.TIMEOUT:
+                continue
+            elif rd['type'] == 'signUpResult' and rd['result'] == 'success':
+                # end the timer
+                end = time.time()
+                break
+        if end is None:
+
+            # debug
+            # print rd
+            # debug
+
+            Robot.SignUpAbortCnt += 1
+            return 'SignUpError'
+        else:
+            delay = end - start
+            Robot.SignUpDelaySum += delay
+            Robot.MinSignUpDelay = min(Robot.MinSignUpDelay, delay)
+            Robot.MaxSignUpDelay = max(Robot.MaxSignUpDelay, delay)
+            return True
+
+    def singleGame(self, numOfRetries):
         # send several recent scores and then send final score which means game over
-        pass
+        return True
 
     def logout(self):
         pass
 
-    def notice(self):
-        pass
+    def shutdown(self):
+        # disconnect from the server
+        self.sock.close()
 
-    def requestRank(self):
-        pass
+    def notice(self, numOfRetries):
+        end = None
+        start = time.time()
+        for i in range(numOfRetries):
+            Robot.NoticeCnt += 1
+            sd = {
+                'sid': self.sid,
+                'type': "notice"
+            }
+            netstream.send(self.sock, sd)
+            rd = self.recv()
+            if rd == netstream.CLOSED:
+                break
+            elif rd == netstream.EMPTY or rd == netstream.TIMEOUT:
+                continue
+            elif rd['type'] == 'notice' and rd['content'] == 'Sever is connected':
+                # end the timer
+                end = time.time()
+                break
+        if end is None:
+            Robot.NoticeAbortCnt += 1
+            return 'NoticeError'
+        else:
+            delay = end - start
+            Robot.NoticeDelaySum += delay
+            Robot.MinNoticeDelay = min(Robot.MinNoticeDelay, delay)
+            Robot.MaxNoticeDelay = max(Robot.MaxNoticeDelay, delay)
+            return True
+
+    def requestRank(self, numOfRetries):
+        end = None
+        # start the timer
+        start = time.time()
+        for i in range(numOfRetries):
+            Robot.RequestRankCnt += 1
+            sd = {
+                'sid': self.sid,
+                'type': "notice",
+            }
+            netstream.send(self.sock, sd)
+            rd = self.recv()
+            if rd == netstream.CLOSED:
+                break
+            elif rd == netstream.EMPTY or rd == netstream.TIMEOUT:
+                continue
+            elif rd['type'] == 'notice' and rd['content'] == 'Sever is connected':
+                # end the timer
+                end = time.time()
+                break
+        if end is None:
+            Robot.RequestRankAbortCnt += 1
+            return 'RequestRankError'
+        else:
+            delay = end - start
+            Robot.RequestRankDelaySum += delay
+            Robot.MinRequestRankDelay = min(Robot.MinRequestRankDelay, delay)
+            Robot.MaxRequestRankDelay = max(Robot.MaxRequestRankDelay, delay)
+            return True

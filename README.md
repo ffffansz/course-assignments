@@ -5,4 +5,4 @@ The following courses are included:
 - AI: Artificial Intelligence (in junior year, first semester)
 - NPA: Network Protocol Analysis (in junior year, first semester)
 - CCS: Cryptography and cyber security (in junior year, first semester)
-- MIPP: Mobile Internet Programming Practice(in junior year, first semester)
+- MIPP: Mobile Internet Programming Practice (in junior year, first semester)

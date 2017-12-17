@@ -9,6 +9,7 @@ def processData(recvData):
     recvData = washData(recvData)
     # print "debug: receive", recvData
     try:
+        # TODO: add thread lock
         file = shelve.open("user.dat")
         if recvData['type'] == "notice":
             sendData = {

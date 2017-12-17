@@ -1,0 +1,29 @@
+
+data 最小注册/登陆/Notice/RequestRank延迟
+    add Robot.MinSignUpDelay
+    每次执行相应操作结束后，更新最小值
+data 最大注册/登陆/Notice/RequestRank延迟
+    add Robot.MaxSignUpDelay
+    每次执行相应操作结束后，更新最小值
+data 平均注册/登陆/Notice/RequestRank延迟（成功）
+    add Robot.SuccessfulSignUpDelay    # 收到服务器响应后再更新
+    add Robot.SuccessfulSignUpCnt      # 收到服务器响应后更新
+data 注册/登陆/Notice/RequestRank丢包率
+    add Robot.FailureSignUpCnt         # 未收到服务器响应的数量
+
+data
+
+--------------------------------------------------------------------
+
+每个Robot可能的行为：
+
+连接：
+    连接服务器
+        连接成功：执行后续动作
+        连接失败：重新尝试连接
+        连接N次失败：Abort
+
+注册：
+    发送注册请求
+        注册成功
+        请求失败：重新尝试请求

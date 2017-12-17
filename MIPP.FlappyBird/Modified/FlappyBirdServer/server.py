@@ -13,7 +13,7 @@ if __name__ == "__main__":
     port = 9234
 
     s.bind((host, port))  # 绑定IP与端口
-    s.listen(4)  # 可以挂起未处理的最大连接数，不是服务器的最大负载连接数
+    s.listen(5)  # 可以挂起未处理的最大连接数，不是服务器的最大负载连接数
 
     inputs = list()  # 需要监听的socket列表
     inputs.append(s)
@@ -38,7 +38,7 @@ if __name__ == "__main__":
                     inputs.append(connection)  # 将socket加入监听列表中中
                     sendData = {}
                     sendData['sid'] = sid
-                    print 'ConnectEvent', 'Allocate sid %d to %s:', sid, str(addr)
+                    print 'ConnectEvent', 'Allocate sid %d to %s:' % (sid, str(addr))
                     netstream.send(connection, sendData)
 
                     # 记录每个连接的属性
@@ -56,8 +56,9 @@ if __name__ == "__main__":
                     # 客户端socket关闭
                     if recvData == netstream.CLOSED or recvData == netstream.TIMEOUT:
                         if r.getpeername() not in disconnected_list:
-                            print getCurrentTimeStr(), str(r.getpeername()) + ' disconnected'
+                            print processData.getCurrentTimeStr(), str(r.getpeername()) + ' disconnected'
                             disconnected_list.append(r.getpeername())  # 拓展断开连接的客户端列表
+                            inputs.remove(r)
 
                     else:  # 根据收到的request发送response
                         # 公告

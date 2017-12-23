@@ -1,13 +1,45 @@
 【安装与启动】
-0.安装python2.7.14、cocos2d。
-1.通过FlappyBirdServer/start_server.bat启动服务端。
-2.通过FlappyBirdClient/start_client.bat启动客户端。
 
-【功能说明】
-1.点击“notice”按钮显示服务器公告，该功能用于演示服务器客户端通讯功能。
-2.点击客户端界面空白处可以触发小鸟跳跃，避开栏杆。
+0.安装Python 2.7.14、安装cocos2d库。
+
+1.通过FlappyBirdServer/start_server.bat启动服务端。
+
+2.通过FlappyBirdClient/start_client.bat启动客户端（请确保已启动服务端）。
+
+
+3.进入FlappyBirdClient/Server_Tester目录，打开命令行工具，执行“python main.py”命令启动（服务端）测试脚本（请确保已启动服务端）。
+
+【客户端功能说明】
+
+1.登陆界面
+	a.鼠标移至下划线上进行键盘输入用户名和密码。
+	b.第一次登陆点击“Sign up”，否则点击“Login”。
+2.主界面
+	a.点击“Start”开始游戏，进入难度选择界面。
+	b.点击“Notice”按钮显示服务器公告，该功能用于演示服务器客户端通讯功能。
+
+	c.点击“Record”显示个人战绩。
+	d.点击“Rank”显示排名。
+	e.点击“Logout”登出账号，回到登陆界面。
+3.难度选择界面
+	a.三个难度等级：“Easy”（简单）、“Normal”（普通）、“Hard”（困难）。
+	b.点击“AI”，电脑自动控制小鸟进行游戏，难度为“Hard”（可用于测试或娱乐）。
+4.游戏界面
+	a.点击客户端界面空白处可以触发小鸟跳跃，从水管缝隙中穿过，获得分数。
+	b.道具：
+		i.复活：
+			小鸟碰撞复活道具后，生命数增加，剩余生命数量显示在左下角；
+			小鸟死亡后，消耗1条生命数，重置至屏幕中间，进入准备状态，经过下一个水管后继续操控。
+		ii.冲刺：
+			小鸟获得冲刺道具后，直线向前冲刺一段距离，无视物理撞击，经过10个水管后恢复。
+	c.游戏结束后，显示分数和主界面菜单。
+
 
 【代码说明】
-1.[客户端]逻辑代码在flappy_bird\lib目录下。
-2.[客户端]资源文件在flappy_bird\data目录下。
-3.[服务端]代码在flappy_bird\FlappyBirdServer目录下。
+
+1.[客户端]逻辑代码在\FlappyBirdClient\lib\目录下。
+2.[客户端]资源文件在\FlappyBirdClient\data\目录下。
+3.[服务端]代码在\FlappyBirdServer\目录下。
+4.[协议脚本]代码在\Server_Tester\目录下。
+
+

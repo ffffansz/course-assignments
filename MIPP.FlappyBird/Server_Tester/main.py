@@ -9,8 +9,6 @@ import threading
 host = "127.0.0.1"
 port = 9234
 
-def VPrint(content):
-    print json.dumps(content, encoding='utf-8', ensure_ascii=False, indent=1)
 
 def formatPrint(data):
     # 格式化输出统计数据
@@ -75,13 +73,11 @@ def serverTester(nameRange, randomActionsNum, eachActionRetries):
     return
 
 def main():
-    if os.path.exists('F:\DevFiles\course-assignments\MIPP.FlappyBird\Modified\FlappyBirdServer\user.dat'):
-        os.remove('F:\DevFiles\course-assignments\MIPP.FlappyBird\Modified\FlappyBirdServer\user.dat')
 
     nameRange = 1000
-    robotsNum = 800
+    robotsNum = 100
     randomActionsNum = 50
-    eachActionRetries = 512
+    eachActionRetries = 256
 
     # 生成robotsNum个机器人，机器人的用户名会在(0, nameRange)取一个随机数
     robotsThreads = [threading.Thread(target=serverTester, args=(nameRange, randomActionsNum, eachActionRetries))

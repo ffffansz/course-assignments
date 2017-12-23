@@ -16,7 +16,7 @@ class Robot:
 
     # connect to server
     ConnectCnt = 0                    # 总连接次数
-    ConnectSuccessCnt = 0          # 连接成功的次数 = 连接成功的机器人数量
+    ConnectSuccessCnt = 0             # 连接成功的次数 = 连接成功的机器人数量
     ConnectDelaySum = 0.              # 连接延迟的总和
     MinConnectDelay = INF             # 最小连接延迟
     MaxConnectDelay = -INF            # 最大连接延迟

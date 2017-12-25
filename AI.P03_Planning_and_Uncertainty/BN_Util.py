@@ -5,7 +5,7 @@ from copy import deepcopy
 import timeit, time
 
 
-def inference(factorList, queryVars, orderListOfVE, evidence):
+def inference(factorList, orderListOfVE, evidence, queryVar, value):
     """
     :param factorList: list[Nodes]
     :param queryVars: list[var]
@@ -31,12 +31,12 @@ def inference(factorList, queryVars, orderListOfVE, evidence):
         localFactors.append(factorsIncludeVar[0])
 
     for remainFactor in localFactors:
-        assert remainFactor.varList is [queryVars, ], 'VE error.'
+        assert remainFactor.varList is [queryVar], 'VE error.'
 
     for i in range(1, len(localFactors)):
         localFactors[0].multiply(localFactors[i])
 
-    return localFactors[0].cpt
+    return localFactors[0].cpt[((queryVar, value), )]
 
 
 def printFactors(factorList):
@@ -60,9 +60,9 @@ class CondiPrTable:
     def getInitializedCpt(table, vars):
         cpt = {}
         for row in table:
-            k = tuple()
+            k = ()   # add None for cpt with single var
             for i in range(len(row) - 1):
-                k += (vars[i], row[i])
+                k += ((vars[i], row[i]), )
             cpt[k] = row[-1]
         return cpt
 
@@ -126,6 +126,55 @@ class Node:
                 ncpt[nk] = pr
         self.cpt = ncpt
         self.varList.remove(var)
+
+
+class BayesNet:
+    def __init__(self, factorList):
+        self.nodes = factorList
+        self.name_fac_map = dict(tuple([(factor.name, factor) for factor in factorList]))
+        self.graph = dict()
+        self.initGraph_()
+
+    def initGraph_(self):
+        for node in self.nodes:
+            self.graph[node.name] = list()
+        for node in self.nodes:
+            for parent in node.varList:
+                if parent is not node.name:
+                    self.graph[parent].append(node.name)
+        for k in self.graph:
+            self.graph[k] = tuple(self.graph[k])
+
+    def getVEOrdering_(self):
+        # TODO
+        return list()
+
+    def inference(self, evidence, queryVar, value):
+        localFactors = deepcopy(self.nodes)  # avoiding the factorList being changed
+        for e in evidence:
+            for factor in localFactors:
+                if e in factor.varList:
+                    factor.restrict(e, evidence[e])
+
+        orderListOfVE = self.getVEOrdering_()
+        for var2elim in orderListOfVE:
+            factorsIncludeVar = [factor for factor in localFactors if var2elim in factor.varList]
+            assert len(factorsIncludeVar) is not 0, \
+                'there is a variable to eliminate which is not a valid variable in this list of factors.'
+            for i in range(1, len(factorsIncludeVar)):
+                factorsIncludeVar[0].multiply(factorsIncludeVar[i])
+            factorsIncludeVar[0].sumout(var2elim)
+            # remove all factors in factorsIncludeVar
+            localFactors = list(set(localFactors).difference(set(factorsIncludeVar)))
+            localFactors.append(factorsIncludeVar[0])
+
+        for remainFactor in localFactors:
+            assert remainFactor.varList is [queryVar], 'VE error.'
+
+        for i in range(1, len(localFactors)):
+            localFactors[0].multiply(localFactors[i])
+
+        return localFactors[0].cpt[((queryVar, value),)]
 
 
 if __name__ == '__main__':

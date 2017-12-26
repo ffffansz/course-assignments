@@ -129,4 +129,9 @@ if __name__ == '__main__':
     factors.append(Disability)
 
     model = BayesNet(factors)
-    print()
+    print('p1 =', model.inference({'PatientAge': '31-65', 'CTScanResult': 'Ischemic Stroke'}, 'Mortality', 'True'))
+    print('p2 =', model.inference({'PatientAge': '65+', 'MRIScanResult': 'Hemmorraghic Stroke'},
+                                  'Disability', 'Moderate'))
+    print('p3 =', model.inference({'PatientAge': '65+', 'MRIScanResult': 'Ischemic Stroke', 'CTScanResult': 'Hemmorraghic Stroke'},
+                                  'StrokeType', 'Stroke Mimic'))
+    print('p4 =', model.inference({'PatientAge': '0-30'}, 'Anticoagulants', 'Not used'))

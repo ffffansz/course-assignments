@@ -4,6 +4,7 @@
 from BN_Util import *
 
 if __name__ == '__main__':
+    '''
     N1 = Node('N1', ['A', 'B'])
     N2 = Node('N2', ['B', 'C'])
     N3 = Node('N3', ['C', 'D'])
@@ -26,3 +27,15 @@ if __name__ == '__main__':
     N2.printInfo()
     N1.multiply(N2)
     N1.printInfo()
+    '''
+    A = Node('A', ['A'])
+    B = Node('B', ['B', 'A'])
+    C = Node('C', ['C', 'A'])
+    D = Node('D', ['D', 'B'])
+    E = Node('E', ['E', 'C'])
+    F = Node('F', ['F', 'D', 'E'])
+    G = Node('G', ['G', 'C'])
+    H = Node('H', ['H', 'E', 'G'])
+    model = BayesNet([A, B, C, D, E, F, G, H])
+    order = model.getVEOrdering_('D')
+    print(order)

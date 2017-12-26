@@ -145,22 +145,66 @@ class BayesNet:
         for k in self.graph:
             self.graph[k] = tuple(self.graph[k])
 
-    def getVEOrdering_(self):
-        # TODO
-        return list()
+    def getVEOrdering_(self, var2query):
+        remainHyperEdges = [nodes.varList for nodes in self.nodes]   # get all hyperedges
+        remainNodes = list(self.graph.keys())
+        remainNodes.remove(var2query)
+        VEOrderList = list()
 
-    def inference(self, evidence, queryVar, value):
+        if len(remainHyperEdges) is 1:    # if only one hyper edge
+            VEOrderList.extend(remainHyperEdges[0])
+            VEOrderList.remove(var2query)
+            return VEOrderList
+
+        if len(remainNodes) is 1:         # only one node(the queried one)
+            return VEOrderList            # return empty orderList
+
+        # 对remainNodes进行迭代，直到最后只剩一个点，即要查询的点
+        # 对remianHyperEdges进行迭代，找出下一个要消除的点，这个点满足的条件是，消除之后产生的新的超边的size最小
+        while remainNodes:
+            newGenHyperEdgeSize = dict()        # key: 某变量 val: 删除该变量后新产生的超边的size
+            relatedNodes = dict()
+            relatedHyperEdges = dict()
+            for node in remainNodes:
+                relatedNodes[node] = set()
+                relatedHyperEdges[node] = list()
+                for he in remainHyperEdges:
+                    if node in he:
+                        relatedNodes[node] = relatedNodes[node] | set(he)   # 新产生的超边是该变量所在的所有超边的结点集合的并集
+                        relatedHyperEdges[node].append(he)
+                # 遍历完所有剩余超边，得到与该结点相关的所有结点的集合S，则删除该结点得到的新的超边大小为len(S)-1
+                newGenHyperEdgeSize[node] = len(relatedNodes[node]) - 1
+
+            # 找出产生的新超边的size最小的node
+            next2e = sorted(newGenHyperEdgeSize, key=lambda k: newGenHyperEdgeSize[k])[0]
+            VEOrderList.append(next2e)
+
+            # remove the node from remain nodes list
+            remainNodes.remove(next2e)
+
+            # remove related hyper edges
+            for he in relatedHyperEdges[next2e]:
+                remainHyperEdges.remove(he)
+
+            # add new hyper edge got from removing the node
+            remainHyperEdges.append(list(relatedNodes[next2e].difference(set(next2e))))
+
+        return VEOrderList
+
+    def inference(self, evidence, var2query, value):
         localFactors = deepcopy(self.nodes)  # avoiding the factorList being changed
         for e in evidence:
             for factor in localFactors:
                 if e in factor.varList:
                     factor.restrict(e, evidence[e])
 
-        orderListOfVE = self.getVEOrdering_()
+        orderListOfVE = self.getVEOrdering_(var2query)
         for var2elim in orderListOfVE:
             factorsIncludeVar = [factor for factor in localFactors if var2elim in factor.varList]
-            assert len(factorsIncludeVar) is not 0, \
-                'there is a variable to eliminate which is not a valid variable in this list of factors.'
+            if len(factorsIncludeVar) is 0:
+                continue
+            # assert len(factorsIncludeVar) is not 0, \
+            #    'there is a variable to eliminate which is not a valid variable in this list of factors.'
             for i in range(1, len(factorsIncludeVar)):
                 factorsIncludeVar[0].multiply(factorsIncludeVar[i])
             factorsIncludeVar[0].sumout(var2elim)
@@ -168,13 +212,15 @@ class BayesNet:
             localFactors = list(set(localFactors).difference(set(factorsIncludeVar)))
             localFactors.append(factorsIncludeVar[0])
 
-        for remainFactor in localFactors:
-            assert remainFactor.varList is [queryVar], 'VE error.'
+        # for remainFactor in localFactors:
+        #    assert remainFactor.varList is [var2query], 'VE error.'
 
-        for i in range(1, len(localFactors)):
-            localFactors[0].multiply(localFactors[i])
+        remainFactors = [factor for factor in localFactors if var2query in factor.varList]
 
-        return localFactors[0].cpt[((queryVar, value),)]
+        for i in range(1, len(remainFactors)):
+            remainFactors[0].multiply(remainFactors[i])
+
+        return remainFactors[0].cpt[((var2query, value), )]
 
 
 if __name__ == '__main__':

@@ -71,9 +71,14 @@ class SHA512:
     def sha(self):
         blockNum = len(self.padedBinCtx) // 1024
         blockIdx = 0
+        print(blockNum)
         while blockIdx < blockNum:
+
             self.process_(blockIdx)
             for k in self.reg1:
+                if self.reg1[k] + self.reg0[k] >= pow(2, 64):
+                    #print('debug')
+                    pass
                 self.reg1[k] = (self.reg1[k] + self.reg0[k]) % pow(2, 64)
                 self.reg0[k] = self.reg1[k]
 

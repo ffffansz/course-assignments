@@ -4,6 +4,12 @@
 from copy import deepcopy
 
 
+def sha512(s):
+    s_sha512 = SHA512(s)
+    s_sha512.sha()
+    return s_sha512.summary
+
+
 class SHA512_CONST:
 
     K = (
@@ -71,14 +77,10 @@ class SHA512:
     def sha(self):
         blockNum = len(self.padedBinCtx) // 1024
         blockIdx = 0
-        print(blockNum)
         while blockIdx < blockNum:
 
             self.process_(blockIdx)
             for k in self.reg1:
-                if self.reg1[k] + self.reg0[k] >= pow(2, 64):
-                    #print('debug')
-                    pass
                 self.reg1[k] = (self.reg1[k] + self.reg0[k]) % pow(2, 64)
                 self.reg0[k] = self.reg1[k]
 
@@ -130,6 +132,8 @@ class SHA512:
         binCtx = str2bin(self.ctx)
         ctxLen = len(binCtx)
         padLen = 896 - ctxLen % 1024
+        if padLen <= 0:
+            padLen += 1024
         padMsg = int2bin(pow(2, padLen-1))  # 一个1和padLen-1个0
         oriLenMsg = int2bin(ctxLen)  # 原始长度
         padedOriLenMsg = genZeroStr(128 - len(oriLenMsg)) + oriLenMsg
@@ -152,6 +156,8 @@ class SHA512:
 
         self.summary = int(self.summary, 2)
         self.summary = hex(self.summary)[2:]
+        if len(self.summary) < 128:
+            self.summary = genZeroStr(128-len(self.summary)) + self.summary
 
 
 def int2bin(n):
@@ -233,14 +239,4 @@ def Maj(a, b, c):
     ret_int = (a & b) ^ (a & c) ^ (b & c)
     return ret_int
 
-
-if __name__ == '__main__':
-    m = 'asfafa'
-    m_sha512 = SHA512(m)
-    m_sha512.sha()
-    print(m_sha512.summary)
-    # m = 0x00010000
-    # print(int2bin(ROTR(m, 3))) pass
-    # print(int2bin(SHR(m, 28)), len(int2bin(SHR(m, 28))))
-    # print(int2bin(SHR(4, 2)), len(int2bin(SHR(4, 2))))
 

@@ -2,4 +2,4 @@ SHA (Secure Hash Algorithm£¬Òë×÷°²È«É¢ÁÐËã·¨) ÊÇÃÀ¹ú¹ú¼Ò°²È«¾Ö (NSA) Éè¼Æ£¬ÃÀ¹ú¹
 ÖÐÎÄÃû°²È«É¢ÁÐËã·¨ ÍâÎÄÃû sha-512 È«    ³Æ Secure Hash Algorithm Éè¼ÆÕß ÃÀ¹ú¹ú¼Ò°²È«¾Ö
 SHA-512 (ÕâÐ©ÓÐÊ±ºòÒ²±»³Æ×ö SHA-2)¡£
 ¼ò½é¡¡SHA ¼Ò×å
-ÕýÊ½Ãû³ÆÎª SHA µÄ¼Ò×åµÚÒ»¸ö³ÉÔ±·¢²¼ÓÚ 1993Äê¡£È»¶øÏÖÔÚµÄÈËÃÇ¸øËüÈ¡ÁËÒ»¸ö·ÇÕýÊ½µÄÃû³Æ SHA-0 ÒÔ±ÜÃâÓëËüµÄºó¼ÌÕß»ìÏý¡£Á½ÄêÖ®ºó£¬ SHA-1£¬µÚÒ»¸ö SHA µÄºó¼ÌÕß·¢²¼ÁË¡£ ÁíÍâ»¹ÓÐËÄÖÖ±äÌå£¬Ôø¾­·¢²¼ÒÔÌáÉýÊä³öµÄ·¶Î§ºÍ±ä¸üÒ»Ð©Ï¸Î¢Éè¼Æ: SHA-224, SHA-256, SHA-384 ºÍ SHA-512 (ÕâÐ©ÓÐÊ±ºòÒ²±»³Æ×ö SHA-2)
+ÕýÊ½Ãû³ÆÎª SHA µÄ¼Ò×åµÚÒ»¸ö³ÉÔ±·¢²¼ÓÚ 1993Äê¡£È»¶øÏÖÔÚµÄÈËÃÇ¸øËüÈ¡ÁËÒ»¸ö·ÇÕýÊ½µÄÃû³Æ SHA-0 ÒÔ±ÜÃâÓëËüµÄºó¼ÌÕß»ìÏý¡£Á½ÄêÖ®ºó£¬ SHA-1£¬µÚÒ»¸ö SHA µÄºó¼ÌÕß·¢²¼ÁË¡£ ÁíÍâ»¹ÓÐËÄÖÖ±äÌå£¬Ôø¾­·¢²¼ÒÔÌáÉýÊä³öµÄ·¶Î§ºÍ±ä¸üÒ»Ð©Ï¸Î¢Éè¼Æ: SHA-224, SHA-256, SHA-384 ºÍ SHA-512 (ÕâÐ©ÓÐÊ±ºòÒ²±»³Æ×ö SHA-2)¡£

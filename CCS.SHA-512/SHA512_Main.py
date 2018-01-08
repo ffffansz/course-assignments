@@ -21,9 +21,7 @@ class Mainwin(QWidget, Ui_Mainwin):
             self.plain_textedit.setText('请输入要加密的文本！')
             return
 
-        msg_sha512 = SHA512(msg)
-        msg_sha512.sha()
-        self.ret_textedit.setText(msg_sha512.summary)
+        self.ret_textedit.setText(sha512(msg))
         return
 
     def importBtClicked(self):

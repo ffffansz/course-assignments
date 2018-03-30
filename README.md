@@ -2,7 +2,15 @@
 This repository is used to synchronize the codes of my course assignments.
 
 The following courses are included:
-- AI: Artificial Intelligence (in junior year, first semester)
-- NPA: Network Protocol Analysis (in junior year, first semester)
-- CCS: Cryptography and cyber security (in junior year, first semester)
-- MIPP: Mobile Internet Programming Practice (in junior year, first semester)
+
+### In junior year, first semester
+- AI: Artificial Intelligence
+- NPA: Network Protocol Analysis
+- CCS: Cryptography and cyber security
+- MIPP: Mobile Internet Programming Practice
+
+### In junior year, second semester
+
+- MLDM: Machine Learning and Data Mining
+- ADSE: Analysis and Design of Search Engine
+- AND: Android Application Design and Development

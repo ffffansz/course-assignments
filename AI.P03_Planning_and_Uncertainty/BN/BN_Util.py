@@ -13,7 +13,7 @@ def inference(factorList, orderListOfVE, evidence, queryVar, value):
     :param evidence: dict[var: value]
     :return: dict[queryVar: value]
     """
-    localFactors = deepcopy(factorList) # avoiding the factorList being changed
+    localFactors = deepcopy(factorList)  # avoiding the factorList being changed
     for e in evidence:
         for factor in localFactors:
             if e in factor.varList:
